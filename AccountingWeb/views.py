@@ -3,6 +3,7 @@ from .models import Account, Transaction
 from django.shortcuts import render, redirect
 from decimal import Decimal
 from django.db.models import Sum
+import logging
 
 debitAccounts = ["Food Expenses", "Cash", "DC-Checking Account", "Vanguard Money Fund", "Vanguard Brokerage Account",
                  "DC-Savings Account", "Utilities Expenses", "Entertainment Expenses", "General Asset Account"]
@@ -87,6 +88,7 @@ def new_transaction_view(request):
 
     # Retrieve the list of account names for the drop-down
     account_names = [account.account_name for account in Account.objects.all()]
+    # logging.warning('account_names: %s', account_names)
 
     return render(request, 'new_transaction.html', {'account_names': account_names})
 

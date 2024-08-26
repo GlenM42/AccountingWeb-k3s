@@ -5,7 +5,7 @@ DEBIT_CREDIT_CHOICES = [
     ('credit', 'Credit'),
 ]
 
-TRANSACTION_CHOICES = [
+TRANSACTION_CHOICES = sorted([
     ("Food Expenses", "Food Expenses"),
     ("Equity", "Equity"),
     ("Cash", "Cash"),
@@ -25,7 +25,7 @@ TRANSACTION_CHOICES = [
     ("General Asset Account", "General Asset Account"),
     ("General Equity Account", "General Equity Account"),
     ("General Liability Account", "General Liability Account"),
-].sort()
+])
 
 
 class Account(models.Model):
