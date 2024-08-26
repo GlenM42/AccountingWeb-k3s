@@ -1,0 +1,14 @@
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.Python
+help.txt
+.env
+.venv
+env/
+venv/
+ENV/
+db.sqlite3
+.idea
+docker-compose.yml
