@@ -95,8 +95,10 @@ def new_transaction_view(request):
 
 def income_statement_view(request):
     # Lists of account names for revenues and expenses
-    revenue_accounts = ["Revenue-Tutoring", "Revenue-XO", "Salary Income", "Gift Income", "Investment Income"]
-    expense_accounts = ["Utilities Expenses", "Food Expenses", "Entertainment Expenses"]
+    revenue_accounts = ["Revenue-Tutoring", 'Revenue-Salary', 'Revenue-Gift', "Gift Income", 'Revenue-Investment']
+    expense_accounts = ["Utilities Expenses", 'Lodge Expenses', "Food Expenses", 'Rent Expense',
+                        "Entertainment Expenses", 'Insurance Expense', 'Interest Expense', 'Office Supplies Expense',
+                        'Telephone Expense']
 
     # Retrieve and aggregate total revenue and expenses for each category
     revenue_details = (Transaction.objects.filter(credit__in=revenue_accounts).values('credit').annotate(total_amount=Sum('dollar_amount')).order_by('total_amount'))
