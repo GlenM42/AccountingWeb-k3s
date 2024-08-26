@@ -1,0 +1,126 @@
+<!-- templates/new_transaction.html -->
+
+{% load static %}
+<!DOCTYPE HTML>
+<!--
+	Stellar by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+
+ABSOLUTELY FINILIZED VERSION 
+HAS ONLY ONE PROBLEM: WASNT SUPPOSED TO BE HOME
+NOT IN USE
+
+-->
+<html lang="en">
+	<head>
+		<title>New Transaction</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="{% static 'html5up-stellar/assets/css/main.css' %}" />
+		<noscript><link rel="stylesheet" href="{% static 'html5up-stellar/assets/css/noscript.css' %}" /></noscript>
+	</head>
+	<body class="is-preload">
+
+		<!-- Wrapper -->
+			<div id="wrapper">
+
+				<!-- Header -->
+					<header id="header">
+						<h1>This is New Transaction Menu</h1>
+						<p>Somewhere underneath this fog lies our gold</p>
+					</header>
+
+				<!-- Main -->
+					<div id="main">
+
+						<!-- Content -->
+							<section id="content" class="main">
+								<span class="image main"><img src="{% static 'html5up-stellar/images/pic07.jpg' %}" alt="" /></span>
+								<h2>What is here, apart from the Geneva Lake?</h2>
+								<p>So far the functionality is supposed to include just a couple of links. Here is the website navigation:</p>
+                                <ul>
+                                    <li><a href="{% url 'home' %}">Home</a></li>
+                                    <li><a href="{% url 'balance_sheet' %}">Balance Sheet</a></li>
+                                    <li><a href="{% url 'income_statement' %}">Income Statement</a></li>
+                                    <li><a href="{% url 'new_transaction' %}">New Transaction</a></li>
+                                    <li><a href="{% url 'transaction_history' %}">Transaction History</a></li>
+                                    <li><a href="{% url 'admin:index' %}">Admin</a></li>
+                                </ul>
+                                
+                                <form method="post" action="{% url 'new_transaction' %}">
+                                    {% csrf_token %}
+                                    
+                                    {% if user.is_authenticated %}
+                                
+                                        <label for="debit_account">Debit Account:</label>
+                                        <select name="debit_account">
+                                            {% for account_name in account_names %}
+                                                <option value="{{ account_name }}">{{ account_name }}</option>
+                                            {% endfor %}
+                                        </select><br>
+                                    
+                                        <label for="credit_account">Credit Account:</label>
+                                        <select name="credit_account">
+                                            {% for account_name in account_names %}
+                                                <option value="{{ account_name }}">{{ account_name }}</option>
+                                            {% endfor %}
+                                        </select><br>
+                                    
+                                        <label for="dollar_amount">Dollar Amount:</label>
+                                        <input type="text" name="dollar_amount"><br>
+                                    
+                                        <label for="description">Description:</label>
+                                        <input type="text" name="description"><br>
+                                    
+                                        <input type="submit" value="Submit"><br>
+                                    {% else %}
+                                        <p>You are not an authenticated user! No new transaction for you.</p>
+                                    {% endif %}
+                                
+                                </form>
+							</section>
+
+					</div>
+
+				<!-- Footer -->
+					<footer id="footer">
+						<section>
+							<h2>If you've found this, forget it</h2>
+							<p>This webpage server only as a gateway for the accounting app of one Chicago student. No additional purpose expected.</p>
+							<ul class="actions">
+								<li><a href="/login" class="button">Log in</a></li>
+							</ul>
+						</section>
+						<section>
+							<h2>Contact me</h2>
+							<dl class="alt">
+								<dt>Address</dt>
+								<dd>1234 Somewhere Road &bull; Chicago, IL 00000 &bull; USA</dd>
+								<dt>Phone</dt>
+								<dd>(000) 000-0000 x 0000</dd>
+							</dl>
+							<ul class="icons">
+								<li><a href="#" class="icon brands fa-twitter alt"><span class="label">Twitter</span></a></li>
+								<li><a href="#" class="icon brands fa-facebook-f alt"><span class="label">Facebook</span></a></li>
+								<li><a href="#" class="icon brands fa-instagram alt"><span class="label">Instagram</span></a></li>
+								<li><a href="#" class="icon brands fa-github alt"><span class="label">GitHub</span></a></li>
+								<li><a href="#" class="icon brands fa-dribbble alt"><span class="label">Dribbble</span></a></li>
+							</ul>
+						</section>
+						<p class="copyright">&copy; Untitled. Design: <a href="https://html5up.net">HTML5 UP</a>.</p>
+					</footer>
+
+			</div>
+
+		<!-- Scripts -->
+			<script src="{% static 'html5up-stellar/assets/js/jquery.min.js' %}"></script>
+			<script src="{% static 'html5up-stellar/assets/js/jquery.scrollex.min.js' %}"></script>
+			<script src="{% static 'html5up-stellar/assets/js/jquery.scrolly.min.js' %}"></script>
+			<script src="{% static 'html5up-stellar/assets/js/browser.min.js' %}"></script>
+			<script src="{% static 'html5up-stellar/assets/js/breakpoints.min.js' %}"></script>
+			<script src="{% static 'html5up-stellar/assets/js/util.js' %}"></script>
+			<script src="{% static 'html5up-stellar/assets/js/main.js' %}"></script>
+
+	</body>
+</html>

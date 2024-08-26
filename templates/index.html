@@ -1,0 +1,107 @@
+{% load static %}
+<!DOCTYPE HTML>
+<!--
+	Stellar by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html lang="en">
+	<head>
+		<title>Home page</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="{% static 'html5up-stellar/assets/css/main.css' %}" />
+		<noscript><link rel="stylesheet" href="{% static 'html5up-stellar/assets/css/noscript.css' %}" /></noscript>
+	</head>
+	<body class="is-preload">
+
+		<!-- Wrapper -->
+			<div id="wrapper">
+
+				<!-- Header -->
+					<header id="header" class="alt">
+						<span class="logo"><img src="{% static 'html5up-stellar/images/logo.png' %}" alt="" /></span>
+						<h1>My Swiss Offshore</h1>
+                        <p>A small accounting project by <br>
+                                one Chicago student</p>
+					</header>
+
+				<!-- Nav -->
+					<nav id="nav">
+						<ul>
+							<li><a href="{% url 'balance_sheet' %}">Balance Sheet</a></li>
+							<li><a href="{% url 'income_statement' %}">Income Statement</a></li>
+							<li><a href="{% url 'new_transaction' %}">New Transaction</a></li>
+							<li><a href="{% url 'transaction_history' %}">Transactions History</a></li>
+						</ul>
+					</nav>
+
+				<!-- Main -->
+					<div id="main">
+                        
+{#                        <li><a href="{% url 'balance_sheet' %}">Balance Sheet</a></li>#}
+
+						<!-- BS -->
+							<section id="intro" class="main">
+								<div class="spotlight">
+									<div class="content">
+										<header class="major">
+											<h2>Brief description of the Project</h2>
+										</header>
+										<p>The story is simple as a penny. As soon as I began getting some cash on hand,
+                                        it was obvious that I had to record it. For quite some time (around two years) 
+                                        there were no problems with using paper. Yet, in September 2023 I noticed I made 
+                                        a significant error that would lead to big complications in case of an audit.</p>
+                                        <p>That led me to creating this accounting system with some, if not all required 
+                                        checks, UI and here we are!</p>
+										<ul class="actions">
+											<li><a href="{% url 'balance_sheet' %}">Look at Balance Sheet</a></li>
+										</ul>
+									</div>
+									<span class="image"><img src="{% static 'html5up-stellar/images/pic01.jpg' %}" alt="" /></span>
+								</div>
+							</section>
+
+					</div>
+
+				<!-- Footer -->
+					<footer id="footer">
+						<section>
+							<h2>If you've found this, forget it</h2>
+							<p>This webpage server only as a gateway for the accounting app of one Chicago student. No additional purpose expected.</p>
+							<ul class="actions">
+								<li><a href="/login" class="button">Log in</a></li>
+							</ul>
+						</section>
+						<section>
+							<h2>Contact me</h2>
+							<dl class="alt">
+								<dt>Address</dt>
+								<dd>1234 Somewhere Road &bull; Chicago, IL 00000 &bull; USA</dd>
+								<dt>Phone</dt>
+								<dd>(000) 000-0000 x 0000</dd>
+							</dl>
+							<ul class="icons">
+								<li><a href="#" class="icon brands fa-twitter alt"><span class="label">Twitter</span></a></li>
+								<li><a href="#" class="icon brands fa-facebook-f alt"><span class="label">Facebook</span></a></li>
+								<li><a href="#" class="icon brands fa-instagram alt"><span class="label">Instagram</span></a></li>
+								<li><a href="#" class="icon brands fa-github alt"><span class="label">GitHub</span></a></li>
+								<li><a href="#" class="icon brands fa-dribbble alt"><span class="label">Dribbble</span></a></li>
+							</ul>
+						</section>
+						<p class="copyright">&copy; Untitled. Design: <a href="https://html5up.net">HTML5 UP</a>.</p>
+					</footer>
+
+			</div>
+
+		<!-- Scripts -->
+			<script src="{% static 'html5up-stellar/assets/js/jquery.min.js' %}"></script>
+			<script src="{% static 'html5up-stellar/assets/js/jquery.scrollex.min.js' %}"></script>
+			<script src="{% static 'html5up-stellar/assets/js/jquery.scrolly.min.js' %}"></script>
+			<script src="{% static 'html5up-stellar/assets/js/browser.min.js' %}"></script>
+			<script src="{% static 'html5up-stellar/assets/js/breakpoints.min.js' %}"></script>
+			<script src="{% static 'html5up-stellar/assets/js/util.js' %}"></script>
+			<script src="{% static 'html5up-stellar/assets/js/main.js' %}"></script>
+
+	</body>
+</html>

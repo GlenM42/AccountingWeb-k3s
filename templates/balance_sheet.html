@@ -1,0 +1,181 @@
+{% load static %}
+<!DOCTYPE HTML>
+<!--
+	Stellar by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+
+ABSOLUTELY FINILIZED VERSION 
+HAS ONLY ONE PROBLEM: WASNT SUPPOSED TO BE HOME
+NOT IN USE
+
+-->
+<html lang="en">
+	<head>
+		<title>Balance Sheet Statement</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="{% static 'html5up-stellar/assets/css/main.css' %}" />
+		<noscript><link rel="stylesheet" href="{% static 'html5up-stellar/assets/css/noscript.css' %}" /></noscript>
+	</head>
+	<body class="is-preload">
+
+		<!-- Wrapper -->
+			<div id="wrapper">
+
+				<!-- Header -->
+					<header id="header">
+						<h1>This is Balance Sheet</h1>
+						<p>Somewhere in these mountains lies our gold</p>
+					</header>
+
+				<!-- Main -->
+					<div id="main">
+                    
+                        {% if user.is_authenticated %}
+
+						<!-- Content -->
+							<section id="content" class="main">
+								<span class="image main"><img src="{% static 'html5up-stellar/images/pic04.jpg' %}" alt="" /></span>
+								<h2>What is here, apart from the Swiss mountains?</h2>
+                                
+                                <div style="display: flex; justify-content: space-around; margin-top: 20px;">
+                                <div style="margin-right: 5px;">
+                                    <h2>Assets</h2>
+                                    <div class="table-wrapper">
+                                    <table>
+                                        <thead>
+                                            <tr>
+                                                <th>Name</th>
+                                                <th>Amount</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for asset in assets %}
+                                                <tr>
+                                                    <td>{{ asset.account_name }}</td>
+                                                    <td>{{ asset.total_value }}</td>
+                                                </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                        <tfoot>
+                                            <tr>
+                                                <td>Total: <strong>${{ total_assets }}</strong></td>
+                                            </tr>
+                                        </tfoot>
+                                    </table>
+                                    </div>
+                                </div>
+                            
+                                <div style="margin-right: 5px;">
+                                    <h2>Liabilities</h2>
+                                    <div class="table-wrapper">
+                                    <table>
+                                        <thead>
+                                            <tr>
+                                                <th>Name</th>
+                                                <th>Amount</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for liability in liabilities %}
+                                                <tr>
+                                                    <td>{{ liability.account_name }}</td>
+                                                    <td>{{ liability.total_value }}</td>
+                                                </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                        <tfoot>
+                                            <tr>
+                                                <td>Total: <strong>${{ total_liabilities }}</strong></td>
+                                            </tr>
+                                        </tfoot>
+                                    </table>
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <h2>Equity</h2>
+                                    <div class="table-wrapper">
+                                    <table>
+                                        <thead>
+                                            <tr>
+                                                <th>Name</th>
+                                                <th>Amount</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for equity_account in equity_accounts %}
+                                                <tr>
+                                                    <td>{{ equity_account.account_name }}</td>
+                                                    <td>{{ equity_account.total_value }}</td>
+                                                </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                        <tfoot>
+                                            <tr>
+                                                <td>Total: <strong>${{ total_equity }}</strong></td>
+                                            </tr>
+                                        </tfoot>
+                                    </table>
+                                    </div>
+                                </div>
+                            </div>
+                                
+								<p>So far the functionality is supposed to include just a couple of regular accounting statements. Here is the website navigation:</p>
+                                <ul>
+                                    <li><a href="{% url 'home' %}">Home</a></li>
+                                    <li><a href="{% url 'balance_sheet' %}">Balance Sheet</a></li>
+                                    <li><a href="{% url 'income_statement' %}">Income Statement</a></li>
+                                    <li><a href="{% url 'new_transaction' %}">New Transaction</a></li>
+                                    <li><a href="{% url 'transaction_history' %}">Transaction History</a></li>
+                                    <li><a href="{% url 'admin:index' %}">Admin</a></li>
+                                </ul>
+							</section>
+                        {% else %}
+                            <p>You are not an authenticated user! No statements for you.</p>
+                        {% endif %}
+
+                    </div>
+
+				<!-- Footer -->
+					<footer id="footer">
+						<section>
+							<h2>If you've found this, forget it</h2>
+							<p>This webpage server only as a gateway for the accounting app of one Chicago student. No additional purpose expected.</p>
+							<ul class="actions">
+								<li><a href="/login" class="button">Log in</a></li>
+							</ul>
+						</section>
+						<section>
+							<h2>Contact me</h2>
+							<dl class="alt">
+								<dt>Address</dt>
+								<dd>1234 Somewhere Road &bull; Chicago, IL 00000 &bull; USA</dd>
+								<dt>Phone</dt>
+								<dd>(000) 000-0000 x 0000</dd>
+							</dl>
+							<ul class="icons">
+								<li><a href="#" class="icon brands fa-twitter alt"><span class="label">Twitter</span></a></li>
+								<li><a href="#" class="icon brands fa-facebook-f alt"><span class="label">Facebook</span></a></li>
+								<li><a href="#" class="icon brands fa-instagram alt"><span class="label">Instagram</span></a></li>
+								<li><a href="#" class="icon brands fa-github alt"><span class="label">GitHub</span></a></li>
+								<li><a href="#" class="icon brands fa-dribbble alt"><span class="label">Dribbble</span></a></li>
+							</ul>
+						</section>
+						<p class="copyright">&copy; Untitled. Design: <a href="https://html5up.net">HTML5 UP</a>.</p>
+					</footer>
+
+			</div>
+
+		<!-- Scripts -->
+			<script src="{% static 'html5up-stellar/assets/js/jquery.min.js' %}"></script>
+			<script src="{% static 'html5up-stellar/assets/js/jquery.scrollex.min.js' %}"></script>
+			<script src="{% static 'html5up-stellar/assets/js/jquery.scrolly.min.js' %}"></script>
+			<script src="{% static 'html5up-stellar/assets/js/browser.min.js' %}"></script>
+			<script src="{% static 'html5up-stellar/assets/js/breakpoints.min.js' %}"></script>
+			<script src="{% static 'html5up-stellar/assets/js/util.js' %}"></script>
+			<script src="{% static 'html5up-stellar/assets/js/main.js' %}"></script>
+
+	</body>
+</html>
