@@ -2707,29 +2707,15 @@ input, select, textarea {
 
 /* Table */
 
-	/* Table Wrapper for all screen sizes */
 	.table-wrapper {
 		-webkit-overflow-scrolling: touch;
 		overflow-x: auto;
 	}
 
-	/* Table for smaller screens */
-	@media screen and (max-width: 768px) {
-		.balance-sheet-container {
-			display: flex;
-			flex-direction: column;
-		}
-
-		.balance-sheet-container > div {
-			width: 100%;
-			margin-bottom: 1.5em;
-		}
-
-
-		table {
-			width: 100%;
-			table-layout: auto;
-		}
+	table {
+		margin: 0 0 2em 0;
+		width: 100%;
+	}
 
 		table tbody tr {
 			border: solid 1px;
@@ -2739,7 +2725,6 @@ input, select, textarea {
 
 		table td {
 			padding: 0.75em 0.75em;
-			word-wrap: break-word;
 		}
 
 		table th {
@@ -2782,7 +2767,6 @@ input, select, textarea {
 			table.alt tfoot {
 				border-top: 0;
 			}
-	}
 
 	table tbody tr {
 		border-color: rgba(255, 255, 255, 0.35);
