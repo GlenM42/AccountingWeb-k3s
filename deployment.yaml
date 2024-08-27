@@ -12,13 +12,36 @@ spec:
       labels:
         app: django-app
     spec:
+      imagePullSecrets:
+        - name: regcred
       containers:
-      - name: django-container
-        image: your_django_app_image_name:latest
+      - name: accountingweb-container
+        image: fs.panga-ghost.ts.net:5443/accountingweb:v3.6
         ports:
         - containerPort: 8000
         env:
-        - name: DJANGO_SETTINGS_MODULE
-          value: "your_project.settings"
-        - name: DATABASE_URL
-          value: "mysql://main_usr:your_password@your_mysql_host:3306/main_db"
+          - name: DB_ENGINE
+            value: "django.db.backends.mysql"
+          - name: DB_NAME
+            value: "accounting_db"
+          - name: DB_USER
+            valueFrom:
+              secretKeyRef:
+                name: mysql-secret
+                key: mysql-user
+          - name: DB_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: mysql-secret
+                key: mysql-password
+          - name: DB_HOST
+            valueFrom:
+              secretKeyRef:
+                name: mysql-secret
+                key: mysql-host
+          - name: DB_PORT
+            value: "3306"
+          - name: SECRET_KEY
+            value: "django-insecure-7y1x"
+          - name: DEBUG
+            value: "True"

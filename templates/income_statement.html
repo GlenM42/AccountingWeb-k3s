@@ -66,8 +66,8 @@ NOT IN USE
                                         </tr>
                                         {% for revenue in revenue_details %}
                                         <tr>
-                                            <td style="font-style: italic; padding-left: 50px;">{{ revenue.credit }}</td>
-                                            <td>${{ revenue.total_amount|floatformat:2 }}</td>
+                                            <td style="font-style: italic; padding-left: 50px;">{{ revenue.account_name }}</td>
+                                            <td>${{ revenue.total_value|floatformat:2 }}</td>
                                             <td>{{ revenue.relative_weight|floatformat:2 }}%</td>
                                         </tr>
                                         {% endfor %}
@@ -78,8 +78,8 @@ NOT IN USE
                                         </tr>
                                         {% for expense in expense_details %}
                                         <tr>
-                                            <td style="font-style: italic; padding-left: 50px;">{{ expense.debit }}</td>
-                                            <td>${{ expense.total_amount|floatformat:2 }}</td>
+                                            <td style="font-style: italic; padding-left: 50px;">{{ expense.account_name }}</td>
+                                            <td>${{ expense.total_value|floatformat:2 }}</td>
                                             <td>{{ expense.relative_weight|floatformat:2 }}%</td>
                                         </tr>
                                         {% endfor %}

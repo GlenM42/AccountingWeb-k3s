@@ -2,14 +2,6 @@ from django.contrib.auth.views import LoginView
 from .models import Account, Transaction
 from django.shortcuts import render, redirect
 from decimal import Decimal
-from django.db.models import Sum
-import logging
-
-debitAccounts = ["Food Expenses", "Cash", "DC-Checking Account", "Vanguard Money Fund", "Vanguard Brokerage Account",
-                 "DC-Savings Account", "Utilities Expenses", "Entertainment Expenses", "General Asset Account"]
-
-creditAccounts = ["Equity", "FCU-CC-Balance", "Apple Card", "Revenue-Tutoring", "Revenue-XO", "Salary Income",
-                  "Gift Income", "Investment Income", "General Equity Account", "General Liability Account"]
 
 
 def home_view(request):
@@ -61,58 +53,50 @@ def new_transaction_view(request):
         Transaction.objects.create(debit=debit_account_name, credit=credit_account_name, dollar_amount=dollar_amount,
                                    description=description)
 
-        if debit_account_name in debitAccounts:
-            # Update the debit account
-            debit_account_obj = Account.objects.get(account_name=debit_account_name)
+        # Update the debit account
+        debit_account_obj = Account.objects.get(account_name=debit_account_name)
+        if debit_account_obj.debit_or_credit == 'debit':
             debit_account_obj.total_value += dollar_amount
-            debit_account_obj.save()
-        elif debit_account_name in creditAccounts:
-            # Update the debit account
-            debit_account_obj = Account.objects.get(account_name=debit_account_name)
+        else:  # If it's a credit account
             debit_account_obj.total_value -= dollar_amount
-            debit_account_obj.save()
+        debit_account_obj.save()
 
-            # Check if it is a credit account
-        if credit_account_name in debitAccounts:
-            # Update the credit account
-            credit_account_obj = Account.objects.get(account_name=credit_account_name)
-            credit_account_obj.total_value -= dollar_amount  # Adjust the sign to subtract from the credit account
-            credit_account_obj.save()
-        elif credit_account_name in creditAccounts:
-            # Update the credit account
-            credit_account_obj = Account.objects.get(account_name=credit_account_name)
-            credit_account_obj.total_value += dollar_amount  # Keep the sign positive for debit accounts
-            credit_account_obj.save()
+        # Update the credit account
+        credit_account_obj = Account.objects.get(account_name=credit_account_name)
+        if credit_account_obj.debit_or_credit == 'credit':
+            credit_account_obj.total_value += dollar_amount
+        else:  # If it's a debit account
+            credit_account_obj.total_value -= dollar_amount
+        credit_account_obj.save()
 
         return redirect('transaction_history')  # Redirect to the transaction history page or any other page you want
 
     # Retrieve the list of account names for the drop-down
     account_names = [account.account_name for account in Account.objects.all()]
-    # logging.warning('account_names: %s', account_names)
 
     return render(request, 'new_transaction.html', {'account_names': account_names})
 
 
 def income_statement_view(request):
     # Lists of account names for revenues and expenses
-    revenue_accounts = ["Revenue-Tutoring", 'Revenue-Salary', 'Revenue-Gift', "Gift Income", 'Revenue-Investment']
+    revenue_accounts = ["Revenue-Tutoring", "Revenue-Salary", "Revenue-Gift", "Gift Income", 'Revenue-Investment']
     expense_accounts = ["Utilities Expenses", 'Lodge Expenses', "Food Expenses", 'Rent Expense',
                         "Entertainment Expenses", 'Insurance Expense', 'Interest Expense', 'Office Supplies Expense',
                         'Telephone Expense']
 
-    # Retrieve and aggregate total revenue and expenses for each category
-    revenue_details = (Transaction.objects.filter(credit__in=revenue_accounts).values('credit').annotate(total_amount=Sum('dollar_amount')).order_by('total_amount'))
-    expense_details = (Transaction.objects.filter(debit__in=expense_accounts).values('debit').annotate(total_amount=Sum('dollar_amount')).order_by('total_amount'))
+    # Retrieve total revenue and expenses directly from the Account model
+    revenue_details = Account.objects.filter(account_name__in=revenue_accounts).values('account_name', 'total_value')
+    expense_details = Account.objects.filter(account_name__in=expense_accounts).values('account_name', 'total_value')
 
     # Calculate total revenue and total expenses
-    total_revenue = sum(item['total_amount'] for item in revenue_details)
-    total_expenses = sum(item['total_amount'] for item in expense_details)
+    total_revenue = sum(item['total_value'] for item in revenue_details)
+    total_expenses = sum(item['total_value'] for item in expense_details)
     profit = total_revenue - total_expenses
 
     for item in revenue_details:
-        item['relative_weight'] = (item['total_amount'] / total_revenue) * 100 if total_revenue else 0
+        item['relative_weight'] = (item['total_value'] / total_revenue) * 100 if total_revenue else 0
     for item in expense_details:
-        item['relative_weight'] = (item['total_amount'] / total_expenses) * 100 if total_expenses else 0
+        item['relative_weight'] = (item['total_value'] / total_expenses) * 100 if total_expenses else 0
     profit_weight = (profit / total_revenue) * 100 if total_revenue else 0
 
     # Prepare data for rendering

@@ -6,25 +6,48 @@ DEBIT_CREDIT_CHOICES = [
 ]
 
 TRANSACTION_CHOICES = sorted([
-    ("Food Expenses", "Food Expenses"),
-    ("Equity", "Equity"),
+    # Asset Accounts
     ("Cash", "Cash"),
-    ("DC-Checking Account", "DC-Checking Account"),
-    ("Vanguard Money Fund", "Vanguard Money Fund"),
-    ("Vanguard Brokerage Account", "Vanguard Brokerage Account"),
-    ("DC-Savings Account", "DC-Savings Account"),
-    ("FCU-CC-Balance", "FCU-CC-Balance"),
-    ("Apple Card", "Apple Card"),
-    ("Revenue-Tutoring", "Revenue-Tutoring"),
-    ("Revenue-XO", "Revenue-XO"),
-    ("Utilities Expenses", "Utilities Expenses"),
-    ("Entertainment Expenses", "Entertainment Expenses"),
-    ("Salary Income", "Salary Income"),
-    ("Gift Income", "Gift Income"),
-    ("Investment Income", "Investment Income"),
-    ("General Asset Account", "General Asset Account"),
+    ("Accounts Receivable", "Accounts Receivable"),
+    ("Inventory", "Inventory"),
+    ("Prepaid Expenses", "Prepaid Expenses"),
+    ("Office Supplies", "Office Supplies"),
+    ("Furniture & Fixtures", "Furniture & Fixtures"),
+    ("Buildings", "Buildings"),
+    ("Vehicles", "Vehicles"),
+    ("Land", "Land"),
+    ("Checking Accounts", "Checking Accounts"),
+    ("Savings Accounts", "Savings Accounts"),
+    ("Investments Money", "Investments Money"),
+    ("Investments Assets", "Investments Assets"),
+
+    # Liability Accounts
+    ("Accounts Payable", "Accounts Payable"),
+    ("Credit Cards Payable", "Credit Cards Payable"),
+    ("Wages Payable", "Wages Payable"),
+    ("Interest Payable", "Interest Payable"),
+    ("Notes Payable", "Notes Payable"),
+    ("Mortgage Payable", "Mortgage Payable"),
+
+    # Equity Accounts
     ("General Equity Account", "General Equity Account"),
-    ("General Liability Account", "General Liability Account"),
+
+    # Revenue Accounts
+    ("Revenue-Salary", "Revenue-Salary"),
+    ("Revenue-Tutoring", "Revenue-Tutoring"),
+    ("Revenue-Gift", "Revenue-Gift"),
+    ("Revenue-Investment", "Revenue-Investment"),
+
+    # Expense Accounts
+    ("Utilities Expenses", "Utilities Expenses"),
+    ("Lodge Expenses", "Lodge Expenses"),
+    ("Rent Expense", "Rent Expense"),
+    ("Insurance Expense", "Insurance Expense"),
+    ("Interest Expense", "Interest Expense"),
+    ("Office Supplies Expense", "Office Supplies Expense"),
+    ("Telephone Expense", "Telephone Expense"),
+    ("Food Expenses", "Food Expenses"),
+    ("Entertainment Expenses", "Entertainment Expenses"),
 ])
 
 
