@@ -48,6 +48,9 @@ TRANSACTION_CHOICES = sorted([
     ("Telephone Expense", "Telephone Expense"),
     ("Food Expenses", "Food Expenses"),
     ("Entertainment Expenses", "Entertainment Expenses"),
+    ("Vacation Expenses", "Vacation Expenses"),
+    ("Medical Expenses", "Medical Expenses"),
+    ("Transportation Expenses", "Transportation Expenses"),
 ])
 
 
