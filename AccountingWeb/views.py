@@ -78,15 +78,9 @@ def new_transaction_view(request):
 
 
 def income_statement_view(request):
-    # Lists of account names for revenues and expenses
-    revenue_accounts = ["Revenue-Tutoring", "Revenue-Salary", "Revenue-Gift", "Gift Income", 'Revenue-Investment']
-    expense_accounts = ["Utilities Expenses", 'Lodge Expenses', "Food Expenses", 'Rent Expense',
-                        "Entertainment Expenses", 'Insurance Expense', 'Interest Expense', 'Office Supplies Expense',
-                        'Telephone Expense']
-
-    # Retrieve total revenue and expenses directly from the Account model
-    revenue_details = Account.objects.filter(account_name__in=revenue_accounts).values('account_name', 'total_value')
-    expense_details = Account.objects.filter(account_name__in=expense_accounts).values('account_name', 'total_value')
+    # Dynamically fetch revenue and expense accounts from the Account model
+    revenue_details = Account.objects.filter(account_type='revenue').values('account_name', 'total_value')
+    expense_details = Account.objects.filter(account_type='expense').values('account_name', 'total_value')
 
     # Calculate total revenue and total expenses
     total_revenue = sum(item['total_value'] for item in revenue_details)
