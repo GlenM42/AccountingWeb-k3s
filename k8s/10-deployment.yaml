@@ -16,7 +16,7 @@ spec:
         - name: regcred
       containers:
       - name: accountingweb-container
-        image: fs.panga-ghost.ts.net:5443/accountingweb:v3.7
+        image: fs.panga-ghost.ts.net:5443/accountingweb:v3.9
         imagePullPolicy: Always
         ports:
         - containerPort: 8000
