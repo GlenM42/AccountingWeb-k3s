@@ -13,4 +13,4 @@ db.sqlite3
 .idea
 docker-compose.yml
 console.sql
-/secret.yml
+/k8s/03-secret.yml
