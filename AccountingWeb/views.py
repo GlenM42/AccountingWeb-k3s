@@ -1,7 +1,10 @@
-from django.contrib.auth.views import LoginView
-from .models import Account, Transaction
-from django.shortcuts import render, redirect
 from decimal import Decimal
+import json
+from django.contrib.auth.views import LoginView
+from django.shortcuts import render, redirect
+from django.http import JsonResponse
+from .calculations import calculate_account_balance_over_time
+from .models import Account, Transaction
 
 
 def home_view(request):
@@ -104,3 +107,20 @@ def income_statement_view(request):
     }
 
     return render(request, 'income_statement.html', context)
+
+
+def get_graph_data(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        account_name = data.get('account')
+        days = data.get('days', 30)
+
+        # Calculate the graph data for the selected account
+        dates, values = calculate_account_balance_over_time(account_name, days)
+        return JsonResponse({'dates': dates, 'values': values})
+
+
+def summary_view(request):
+    account_names = Account.objects.values_list('account_name', flat=True)
+    context = {'account_names': account_names}
+    return render(request, 'summary.html', context)

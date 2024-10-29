@@ -18,7 +18,8 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path
-from .views import home_view, balance_sheet_view, transaction_history_view, new_transaction_view, income_statement_view
+from .views import (home_view, balance_sheet_view, transaction_history_view, new_transaction_view,
+                    income_statement_view, summary_view, get_graph_data)
 from django.contrib.auth.views import LoginView, LogoutView
 
 urlpatterns = [
@@ -31,4 +32,6 @@ urlpatterns = [
     path('transaction_history/', transaction_history_view, name='transaction_history'),
     path('new_transaction/', new_transaction_view, name='new_transaction'),
     path('income_statement/', income_statement_view, name='income_statement'),
+    path('summary/', summary_view, name='summary'),
+    path('summary/get-graph-data/', get_graph_data, name='get_graph_data'),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
