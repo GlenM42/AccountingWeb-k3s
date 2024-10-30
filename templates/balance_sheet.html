@@ -5,6 +5,19 @@
 		<title>Balance Sheet Statement</title>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+
+        <link rel="manifest" href="{% static 'manifest.json' %}">
+
+        <link rel="icon" href="{% static 'html5up-stellar/images/favicon.ico' %}" type="image/x-icon">
+
+        <!-- Touch icons for Apple devices -->
+        <link rel="apple-touch-icon" href="{% static 'html5up-stellar/images/apple-touch-icon.png' %}">
+        <link rel="apple-touch-icon-precomposed" href="{% static 'html5up-stellar/images/apple-touch-icon-precomposed.png' %}">
+
+        <!-- Android and other browsers -->
+        <link rel="icon" sizes="192x192" href="{% static 'html5up-stellar/images/android-chrome-192x192.png' %}">
+        <link rel="icon" sizes="512x512" href="{% static 'html5up-stellar/images/android-chrome-512x512.png' %}">
+        
 		<link rel="stylesheet" href="{% static 'html5up-stellar/assets/css/main.css' %}" />
 		<noscript><link rel="stylesheet" href="{% static 'html5up-stellar/assets/css/noscript.css' %}" /></noscript>
 	</head>
@@ -14,9 +27,20 @@
 
 				<!-- Header -->
 					<header id="header">
-						<h1>This is Balance Sheet</h1>
-						<p>Somewhere in these mountains lies our gold</p>
+						<h1>This is the Balance Sheet</h1>
+                        <p><i>Somewhere in these mountains lies our gold</i></p>
 					</header>
+
+                    <nav id="nav">
+                        <ul>
+                            <li><a href="{% url 'home' %}">Home</a></li>
+                            <li><a href="{% url 'balance_sheet' %}">Balance Sheet</a></li>
+                            <li><a href="{% url 'income_statement' %}">Income Statement</a></li>
+                            <li><a href="{% url 'new_transaction' %}">New Transaction</a></li>
+                            <li><a href="{% url 'transaction_history' %}">Transactions History</a></li>
+                            <li><a href="{% url 'summary' %}">Summary</a></li>
+                        </ul>
+                    </nav>
 
 				<!-- Main -->
 					<div id="main">
@@ -26,7 +50,6 @@
 						<!-- Content -->
 							<section id="content" class="main">
 								<span class="image main"><img src="{% static 'html5up-stellar/images/pic04.jpg' %}" alt="" /></span>
-								<h2>What is here, apart from the Swiss mountains?</h2>
                                 
                                 <div style="display: flex; justify-content: space-around; margin-top: 20px;">
                                 <div style="margin-right: 5px; display: table-row">
@@ -111,13 +134,14 @@
                                 </div>
                             </div>
                                 
-								<p>So far, the functionality is supposed to include just a couple of regular accounting statements. Here is the website navigation:</p>
+								<p>Here is the website navigation:</p>
                                 <ul>
                                     <li><a href="{% url 'home' %}">Home</a></li>
                                     <li><a href="{% url 'balance_sheet' %}">Balance Sheet</a></li>
                                     <li><a href="{% url 'income_statement' %}">Income Statement</a></li>
                                     <li><a href="{% url 'new_transaction' %}">New Transaction</a></li>
                                     <li><a href="{% url 'transaction_history' %}">Transaction History</a></li>
+                                    <li><a href="{% url 'summary' %}">Summary</a></li>
                                     <li><a href="{% url 'admin:index' %}">Admin</a></li>
                                 </ul>
 							</section>

@@ -73,6 +73,4 @@ def calculate_account_balance_over_time(account_name, days=7):
     # Convert the snapshots to a DataFrame and sort by date for plotting
     df = pd.DataFrame(balance_snapshots).sort_values(by='date')
 
-    print(df)
-
     return df['date'].astype(str).tolist(), df['balance'].tolist()

@@ -1,0 +1,26 @@
+{
+  "name": "My App",
+  "short_name": "MyApp",
+  "description": "A small accounting project by one Chicago student.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#5f4d93",
+  "icons": [
+    {
+      "src": "/static/html5up-stellar/images/favicon.ico",
+      "sizes": "48x48",
+      "type": "image/x-icon"
+    },
+    {
+      "src": "/static/html5up-stellar/images/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png"
+    },
+    {
+      "src": "/static/html5up-stellar/images/apple-touch-icon-precomposed.png",
+      "sizes": "180x180",
+      "type": "image/png"
+    }
+  ]
+}

@@ -5,6 +5,19 @@
     <title>Summary</title>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+    
+    <link rel="manifest" href="{% static 'manifest.json' %}">
+
+    <link rel="icon" href="{% static 'html5up-stellar/images/favicon.ico' %}" type="image/x-icon">
+
+    <!-- Touch icons for Apple devices -->
+    <link rel="apple-touch-icon" href="{% static 'html5up-stellar/images/apple-touch-icon.png' %}">
+    <link rel="apple-touch-icon-precomposed" href="{% static 'html5up-stellar/images/apple-touch-icon-precomposed.png' %}">
+
+    <!-- Android and other browsers -->
+    <link rel="icon" sizes="192x192" href="{% static 'html5up-stellar/images/android-chrome-192x192.png' %}">
+    <link rel="icon" sizes="512x512" href="{% static 'html5up-stellar/images/android-chrome-512x512.png' %}">
+    
     <link rel="stylesheet" href="{% static 'html5up-stellar/assets/css/main.css' %}" />
     <noscript><link rel="stylesheet" href="{% static 'html5up-stellar/assets/css/noscript.css' %}" /></noscript>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> <!-- Chart.js for graphs -->
@@ -65,24 +78,33 @@
     <!-- Header -->
     <header id="header">
         <h1>Summary</h1>
-        <p>Select an account to view its graph</p>
+        <p><i>In the shadows of Zürich, fortunes whisper their secrets</i></p>
     </header>
+
+    <nav id="nav">
+        <ul>
+            <li><a href="{% url 'home' %}">Home</a></li>
+            <li><a href="{% url 'balance_sheet' %}">Balance Sheet</a></li>
+            <li><a href="{% url 'income_statement' %}">Income Statement</a></li>
+            <li><a href="{% url 'new_transaction' %}">New Transaction</a></li>
+            <li><a href="{% url 'transaction_history' %}">Transactions History</a></li>
+            <li><a href="{% url 'summary' %}">Summary</a></li>
+        </ul>
+    </nav>
 
     <!-- Main -->
     <div id="main">
         {% if user.is_authenticated %}
 
             <section id="content" class="main">
-                <span class="image main"><img src="{% static 'html5up-stellar/images/pic04.jpg' %}" alt="" /></span>
-
-                <h2>What is here, apart from the Swiss mountains?</h2>
+                <span class="image main"><img src="{% static 'html5up-stellar/images/pic08.jpg' %}" alt="" /></span>
 
                 <!-- Time Frame Slider -->
                 <section id="timeframe-section">
                     <h4>Adjust Time Frame (in Days): <span id="timeframe-display">30 days</span></h4>
                     <input type="range" id="timeframe-slider" min="1" max="360" value="30" step="1" />
                 </section>
-
+                <p></p>
                 <!-- Account Buttons -->
                 <div id="account-buttons">
                     {% for account in account_names %}
@@ -105,11 +127,11 @@
                     <!-- Summary Section -->
                     <div class="summary-section">
                         <h3>Account Summary</h3>
-                        <p>This is where the summary of the selected account will appear. For now, it’s just a placeholder text.</p>
                         <ul>
-                            <li><strong>Total Balance:</strong> $XXXX</li>
-                            <li><strong>Transactions:</strong> 10</li>
-                            <li><strong>Last Updated:</strong> Today</li>
+                            <li><strong>Initial Balance:</strong> <span id="initial-balance">$0.00</span></li>
+                            <li><strong>Final Balance:</strong> <span id="final-balance">$0.00</span></li>
+                            <li><strong>Change in Dollars:</strong> <span id="change-dollars">$0.00</span></li>
+                            <li><strong>Change in Percent:</strong> <span id="change-percent">0.00%</span></li>
                         </ul>
                     </div>
                 </div>
@@ -153,6 +175,7 @@
                             })
                             .then(data => {
                                 renderGraph(accountName, data.dates, data.values);
+                                updateSummary(data);
                             })
                             .catch(error => console.error('Error fetching graph data:', error));
                     }
@@ -191,20 +214,28 @@
                             }
                         });
                     }
-                    
+
+                    function updateSummary(data) {
+                        document.getElementById('initial-balance').textContent = `$${data.initial_balance.toFixed(2)}`;
+                        document.getElementById('final-balance').textContent = `$${data.final_balance.toFixed(2)}`;
+                        document.getElementById('change-dollars').textContent = `$${data.change_in_dollars.toFixed(2)}`;
+                        document.getElementById('change-percent').textContent = `${data.change_in_percent.toFixed(2)}%`;
+                    }
+
                     window.addEventListener('load', () => {
                        const defaultAccount = 'Cash';
                        const defaultTimeframe = 30;
                        fetchGraphData(defaultAccount, defaultTimeframe);
                     });
                 </script>
-                <p>So far, the functionality is supposed to include just a couple of regular accounting statements. Here is the website navigation:</p>
+                <p>Here is the website navigation:</p>
                 <ul>
                     <li><a href="{% url 'home' %}">Home</a></li>
                     <li><a href="{% url 'balance_sheet' %}">Balance Sheet</a></li>
                     <li><a href="{% url 'income_statement' %}">Income Statement</a></li>
                     <li><a href="{% url 'new_transaction' %}">New Transaction</a></li>
                     <li><a href="{% url 'transaction_history' %}">Transaction History</a></li>
+                    <li><a href="{% url 'summary' %}">Summary</a></li>
                     <li><a href="{% url 'admin:index' %}">Admin</a></li>
                 </ul>
             </section>
