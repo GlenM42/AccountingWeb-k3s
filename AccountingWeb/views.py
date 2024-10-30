@@ -1,7 +1,11 @@
-from django.contrib.auth.views import LoginView
-from .models import Account, Transaction
-from django.shortcuts import render, redirect
 from decimal import Decimal
+from django.shortcuts import redirect
+import json
+from django.contrib.auth.views import LoginView
+from django.shortcuts import render, redirect
+from django.http import JsonResponse
+from .calculations import calculate_account_balance_over_time
+from .models import Account, Transaction
 
 
 def home_view(request):
@@ -104,3 +108,52 @@ def income_statement_view(request):
     }
 
     return render(request, 'income_statement.html', context)
+
+
+def get_graph_data(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        account_name = data.get('account')
+        days = data.get('days', 30)
+
+        # Calculate the graph data for the selected account
+        dates, values = calculate_account_balance_over_time(account_name, days)
+
+        initial_balance = values[0]
+        final_balance = values[-1]
+        change_in_dollars = final_balance - initial_balance
+        if initial_balance > 0:
+            change_in_percent = (change_in_dollars / initial_balance * 100)
+        elif initial_balance < 0:
+            change_in_percent = 0
+        else:
+            if change_in_dollars > 0:
+                change_in_percent = 100
+            else:
+                change_in_percent = -100
+        return JsonResponse({
+            'dates': dates,
+            'values': values,
+            'initial_balance': initial_balance,
+            'final_balance': final_balance,
+            'change_in_dollars': change_in_dollars,
+            'change_in_percent': change_in_percent
+        })
+
+
+def summary_view(request):
+    account_names = Account.objects.values_list('account_name', flat=True)
+    context = {'account_names': account_names}
+    return render(request, 'summary.html', context)
+
+
+def favicon_redirect(request):
+    return redirect('/static/html5up-stellar/images/favicon.ico')
+
+
+def apple_icon_redirect(request):
+    return redirect('/static/html5up-stellar/images/apple-touch-icon.png')
+
+
+def apple_icon_precomposed_redirect(request):
+    return redirect('/static/html5up-stellar/images/apple-touch-icon-precomposed.png')

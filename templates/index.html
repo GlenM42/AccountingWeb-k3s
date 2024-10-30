@@ -9,8 +9,20 @@
 	<head>
 		<title>Home page</title>
 		<meta charset="utf-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
-		<link rel="stylesheet" href="{% static 'html5up-stellar/assets/css/main.css' %}" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+        <link rel="manifest" href="{% static 'manifest.json' %}">
+
+        <link rel="icon" href="{% static 'html5up-stellar/images/favicon.ico' %}" type="image/x-icon">
+
+        <!-- Touch icons for Apple devices -->
+        <link rel="apple-touch-icon" href="{% static 'html5up-stellar/images/apple-touch-icon.png' %}">
+        <link rel="apple-touch-icon-precomposed" href="{% static 'html5up-stellar/images/apple-touch-icon-precomposed.png' %}">
+
+        <!-- Android and other browsers -->
+        <link rel="icon" sizes="192x192" href="{% static 'html5up-stellar/images/android-chrome-192x192.png' %}">
+        <link rel="icon" sizes="512x512" href="{% static 'html5up-stellar/images/android-chrome-512x512.png' %}">
+
+        <link rel="stylesheet" href="{% static 'html5up-stellar/assets/css/main.css' %}" />
 		<noscript><link rel="stylesheet" href="{% static 'html5up-stellar/assets/css/noscript.css' %}" /></noscript>
 	</head>
 	<body class="is-preload">
@@ -29,11 +41,13 @@
 				<!-- Nav -->
 					<nav id="nav">
 						<ul>
+                            <li><a href="{% url 'home' %}">Home</a></li>
 							<li><a href="{% url 'balance_sheet' %}">Balance Sheet</a></li>
 							<li><a href="{% url 'income_statement' %}">Income Statement</a></li>
 							<li><a href="{% url 'new_transaction' %}">New Transaction</a></li>
-							<li><a href="{% url 'transaction_history' %}">Transactions History</a></li>
-						</ul>
+                            <li><a href="{% url 'transaction_history' %}">Transactions History</a></li>
+                            <li><a href="{% url 'summary' %}">Summary</a></li>
+                        </ul>
 					</nav>
 
 				<!-- Main -->

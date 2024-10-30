@@ -4,17 +4,25 @@
 	Stellar by HTML5 UP
 	html5up.net | @ajlkn
 	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
-
-ABSOLUTELY FINILIZED VERSION 
-HAS ONLY ONE PROBLEM: WASNT SUPPOSED TO BE HOME
-NOT IN USE
-
 -->
 <html lang="en">
 	<head>
 		<title>Income Statement</title>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+        
+        <link rel="manifest" href="{% static 'manifest.json' %}">
+
+        <link rel="icon" href="{% static 'html5up-stellar/images/favicon.ico' %}" type="image/x-icon">
+
+        <!-- Touch icons for Apple devices -->
+        <link rel="apple-touch-icon" href="{% static 'html5up-stellar/images/apple-touch-icon.png' %}">
+        <link rel="apple-touch-icon-precomposed" href="{% static 'html5up-stellar/images/apple-touch-icon-precomposed.png' %}">
+
+        <!-- Android and other browsers -->
+        <link rel="icon" sizes="192x192" href="{% static 'html5up-stellar/images/android-chrome-192x192.png' %}">
+        <link rel="icon" sizes="512x512" href="{% static 'html5up-stellar/images/android-chrome-512x512.png' %}">
+        
 		<link rel="stylesheet" href="{% static 'html5up-stellar/assets/css/main.css' %}" />
 		<noscript><link rel="stylesheet" href="{% static 'html5up-stellar/assets/css/noscript.css' %}" /></noscript>
 	</head>
@@ -25,9 +33,20 @@ NOT IN USE
 
 				<!-- Header -->
 					<header id="header">
-						<h1>This is Income Statement</h1>
-						<p>Somewhere underneath this lake lies our gold</p>
+						<h1>This is the Income Statement</h1>
+                        <p><i>In the depths of Lake Geneva, fortunes drift unseen</i></p>
 					</header>
+
+                    <nav id="nav">
+                        <ul>
+                            <li><a href="{% url 'home' %}">Home</a></li>
+                            <li><a href="{% url 'balance_sheet' %}">Balance Sheet</a></li>
+                            <li><a href="{% url 'income_statement' %}">Income Statement</a></li>
+                            <li><a href="{% url 'new_transaction' %}">New Transaction</a></li>
+                            <li><a href="{% url 'transaction_history' %}">Transactions History</a></li>
+                            <li><a href="{% url 'summary' %}">Summary</a></li>
+                        </ul>
+                    </nav>
 
 				<!-- Main -->
 					<div id="main">
@@ -35,19 +54,7 @@ NOT IN USE
                         <!-- Content -->
                         {% if user.is_authenticated %}
                             <section id="content" class="main">
-                                <span class="image main"><img src="{% static 'html5up-stellar/images/pic07.jpg' %}" alt="" /></span>
-                                <h2>Financial Summary</h2>
-                                <p>This section provides a comprehensive view of the financial health over the selected period.</p>
-                                
-                                <!-- Navigation Links -->
-                                <ul>
-                                    <li><a href="{% url 'home' %}">Home</a></li>
-                                    <li><a href="{% url 'balance_sheet' %}">Balance Sheet</a></li>
-                                    <li><a href="{% url 'transaction_history' %}">Transaction History</a></li>
-                                    <li><a href="{% url 'new_transaction' %}">New Transaction</a></li>
-                                    <li><a href="{% url 'admin:index' %}">Admin</a></li>
-                                </ul>
-        
+                                <span class="image main"><img src="{% static 'html5up-stellar/images/pic00.jpg' %}" alt="" /></span>
                                 <!-- Financial Data Table -->
                                 <div class="table-wrapper">
                                 <table>
@@ -90,16 +97,20 @@ NOT IN USE
                                         </tr>
                                     </tbody>
                                 </table>
-                            </div>
-        
-                                <!-- Potential Addition: Dynamic Graphs and Charts -->
-                                <!-- Include interactive data visualizations here using Plotly.js or similar library -->
-        
+                                </div>
+                                <!-- Navigation Links -->
+                                <ul>
+                                    <li><a href="{% url 'home' %}">Home</a></li>
+                                    <li><a href="{% url 'balance_sheet' %}">Balance Sheet</a></li>
+                                    <li><a href="{% url 'transaction_history' %}">Transaction History</a></li>
+                                    <li><a href="{% url 'new_transaction' %}">New Transaction</a></li>
+                                    <li><a href="{% url 'summary' %}">Summary</a></li>
+                                    <li><a href="{% url 'admin:index' %}">Admin</a></li>
+                                </ul>
                             </section>
                         {% else %}
                             <p>You are not an authenticated user! Access is denied.</p>
                         {% endif %}
-        
                     </div>
 
 				<!-- Footer -->

@@ -46,3 +46,15 @@ spec:
             value: "django-insecure-7y1x"
           - name: DEBUG
             value: "True"
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 100
+              podAffinityTerm:
+                labelSelector:
+                  matchExpressions:
+                  - key: app
+                    operator: In
+                    values:
+                    - django-app
+                topologyKey: "kubernetes.io/hostname"
