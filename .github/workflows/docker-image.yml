@@ -9,11 +9,7 @@ on:
 jobs:
   build:
     runs-on: [self-hosted, k3s]
-
-    env:
-      TAG: date +%F
-      IMAGE: '{{ secrets.REGISTRY_URL }}/accountingweb:$TAG'
-
+    
     steps:
     - name: Checkout source code
       uses: actions/checkout@v4
