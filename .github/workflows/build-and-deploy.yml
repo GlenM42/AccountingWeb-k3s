@@ -40,9 +40,10 @@ jobs:
       run: echo "${{ secrets.REGISTRY_PASSWORD }}" | docker login ${{ secrets.REGISTRY_URL }} -u ${{ secrets.REGISTRY_USERNAME }} --password-stdin
 
     - name: Debug image ref
-      run: echo "Resolved image ref: ${{ needs.prepare.outputs.image_ref }}"
+      run: |
+        IMAGE="${{ needs.prepare.outputs.image_ref }}"
+        echo "Resolved image ref: $IMAGE"
 
-    
     - name: Build and push Docker image
       run: |
         IMAGE="${{ needs.prepare.outputs.image_ref }}"
