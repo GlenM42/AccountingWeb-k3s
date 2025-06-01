@@ -19,10 +19,6 @@ jobs:
     
     - name: Log in to private Docker registry
       run: echo "${{ secrets.REGISTRY_PASSWORD }}" | docker login ${{ secrets.REGISTRY_URL }} -u ${{ secrets.REGISTRY_USERNAME }} --password-stdin
-    
-    - name: Build and tag Docker image
-      run: |
-        docker build -t accountingweb:$TIMESTAMP .
 
     - name: Build and push Docker image with date-based tag
       run: |
