@@ -1,0 +1,58 @@
+name: Build and Deploy
+
+on:
+  push:
+    branches: [ "**" ]
+  pull_request:
+    branches: [ "**" ]
+  workflow_dispatch:
+
+jobs:
+  prepare:
+    name: Create Artifacts
+    runs-on: [self-hosted, k3s]
+    outputs:
+      image_ref: ${{ steps.generate.outputs.image_ref }}
+    steps:
+      - name: Generate full image reference
+        id: generate
+        run: |
+          BRANCH=$(echo "${GITHUB_REF##*/}" | tr '[:upper:]' '[:lower:]' | tr -c 'a-z0-9' '-')
+          DATE=$(date +%F)
+          IMAGE="${{ secrets.REGISTRY_URL }}/accountingweb:${DATE}--${BRANCH}"
+          echo "image_ref=$IMAGE" >> "$GITHUB_OUTPUT"
+          echo "Generated image: $IMAGE"
+
+  build:
+    name: Build and Push Image
+    runs-on: [self-hosted, k3s]
+    needs: prepare
+
+    steps:
+    - name: Checkout source code
+      uses: actions/checkout@v4
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+
+    - name: Log in to private Docker registry
+      run: echo "${{ secrets.REGISTRY_PASSWORD }}" | docker login ${{ secrets.REGISTRY_URL }} -u ${{ secrets.REGISTRY_USERNAME }} --password-stdin
+
+    - name: Build and push Docker image
+      run: |
+        IMAGE="${{ needs.prepare.outputs.image_ref }}"
+        docker build -t $IMAGE .
+        docker push $IMAGE
+
+  deploy:
+    name: Deploy to k3s
+    runs-on: [self-hosted, k3s]
+    needs: [prepare, build]
+    if: github.ref == 'refs/heads/main'  # Optional: only deploy on main
+
+    steps:
+    - name: Deploy image to cluster
+      run: |
+        IMAGE="${{ needs.prepare.outputs.image_ref }}"
+        kubectl set image deployment/django-app accountingweb-container=$IMAGE
+        kubectl rollout status deployment/django-app
