@@ -10,16 +10,21 @@ jobs:
   build:
     runs-on: [self-hosted, k3s]
 
+    env:
+      TIMESTAMP: ${{ github.run_id }}
+
     steps:
     - name: Checkout source code
       uses: actions/checkout@v4
+    
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v3
+    
     - name: Log in to private Docker registry
       run: echo "${{ secrets.REGISTRY_PASSWORD }}" | docker login ${{ secrets.REGISTRY_URL }} -u ${{ secrets.REGISTRY_USERNAME }} --password-stdin
+    
     - name: Build and tag Docker image
       run: |
-        TIMESTAMP=$(date +%s)
         docker build -t accountingweb:$TIMESTAMP .
     - name: Tag and push Docker image to registry
       run: |
