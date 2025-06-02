@@ -20,8 +20,9 @@ jobs:
         shell: bash
         run: |
           RAW_BRANCH="${GITHUB_REF##*/}"
-          BRANCH=$(echo "$RAW_BRANCH" | tr '[:upper:]' '[:lower:]' | tr -c 'a-z0-9' '-' | sed 's/--*/-/g;s/^-//;s/-$//')
-          DATE=$(date +%F)
+          BRANCH=$(echo "$RAW_BRANCH" | tr '[:upper:]' '[:lower:]' \
+                   | tr -c 'a-z0-9' '-' | sed 's/--*/-/g;s/^-//;s/-$//')
+          DATE=$(date +%F-%H%M)
           IMAGE="${{ secrets.REGISTRY_URL }}/accountingweb:${DATE}--${BRANCH}"
 
           echo "image_ref=$IMAGE" >> "$GITHUB_OUTPUT"
@@ -37,27 +38,26 @@ jobs:
     needs: prepare
 
     steps:
-      - name: Checkout source code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Set up Docker Buildx
+      # buildx (brings its own Docker)
+      - id: buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Log in to private Docker registry
-        run: echo "${{ secrets.REGISTRY_PASSWORD }}" | \
-             docker login ${{ secrets.REGISTRY_URL }} \
-             -u ${{ secrets.REGISTRY_USERNAME }} --password-stdin
+      # registry login (also brings Docker)
+      - uses: docker/login-action@v3
+        with:
+          registry: ${{ secrets.REGISTRY_URL }}
+          username: ${{ secrets.REGISTRY_USERNAME }}
+          password: ${{ secrets.REGISTRY_PASSWORD }}
 
-      - name: Debug image ref
-        run: |
-          IMAGE="${{ needs.prepare.outputs.image_ref }}"
-          echo "Resolved image ref: $IMAGE"
-
-      - name: Build and push Docker image
-        run: |
-          IMAGE="${{ needs.prepare.outputs.image_ref }}"
-          docker build -t "$IMAGE" .
-          docker push "$IMAGE"
+      # build & push image
+      - uses: docker/build-push-action@v5
+        with:
+          context: .
+          tags: ${{ needs.prepare.outputs.image_ref }}
+          push: true
+          builder: ${{ steps.buildx.outputs.name }}
 
   deploy:
     name: Deploy to k3s
@@ -69,5 +69,6 @@ jobs:
       - name: Deploy image to cluster
         run: |
           IMAGE="${{ needs.prepare.outputs.image_ref }}"
-          kubectl set image deployment/django-app accountingweb-container="$IMAGE"
+          kubectl set image deployment/django-app \
+                   accountingweb-container="$IMAGE"
           kubectl rollout status deployment/django-app
