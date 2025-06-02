@@ -20,8 +20,7 @@ jobs:
         shell: bash
         run: |
           RAW_BRANCH="${GITHUB_REF##*/}"
-          BRANCH=$(echo "$RAW_BRANCH" | tr '[:upper:]' '[:lower:]' \
-                   | tr -c 'a-z0-9' '-' | sed 's/--*/-/g;s/^-//;s/-$//')
+          BRANCH=$(echo "$RAW_BRANCH" | tr '[:upper:]' '[:lower:]' | tr -c 'a-z0-9' '-' | sed 's/--*/-/g;s/^-//;s/-$//')
           DATE=$(date +%F)
           IMAGE="${{ secrets.REGISTRY_URL }}/accountingweb:${DATE}--${BRANCH}"
 
@@ -29,7 +28,8 @@ jobs:
           echo "Generated image: $IMAGE"
 
       - name: Debug output
-        run: echo "Resolved image ref: ${{ steps.generate.outputs.image_ref }}"
+        run: |
+          echo "Resolved image ref: ${{ steps.generate.outputs.image_ref }}"
 
   build:
     name: Build and Push Image
@@ -69,6 +69,5 @@ jobs:
       - name: Deploy image to cluster
         run: |
           IMAGE="${{ needs.prepare.outputs.image_ref }}"
-          kubectl set image deployment/django-app \
-                   accountingweb-container="$IMAGE"
+          kubectl set image deployment/django-app accountingweb-container="$IMAGE"
           kubectl rollout status deployment/django-app
