@@ -24,7 +24,7 @@ jobs:
           echo "image_ref=$IMAGE" >> $GITHUB_OUTPUT
           echo "Generated image: $IMAGE"
 
-      - name: Debug: cat GITHUB_OUTPUT
+      - name: Debug
         run: cat $GITHUB_OUTPUT    
 
   build:
