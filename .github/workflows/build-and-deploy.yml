@@ -16,12 +16,14 @@ jobs:
     steps:
       - name: Generate full image reference
         id: generate
+        env:
+          GITHUB_OUTPUT: $HOME/github_output.txt
         run: |
           RAW_BRANCH="${GITHUB_REF##*/}"
           BRANCH=$(echo "$RAW_BRANCH" | tr '[:upper:]' '[:lower:]' | tr -c 'a-z0-9' '-' | sed 's/--*/-/g' | sed 's/^-//' | sed 's/-$//')
           DATE=$(date +%F)
           IMAGE="${{ secrets.REGISTRY_URL }}/accountingweb:${DATE}--${BRANCH}"
-          echo "image_ref=$IMAGE" >> $GITHUB_OUTPUT
+          echo "image_ref=$IMAGE" >> "$HOME/github_output.txt"
           echo "Generated image: $IMAGE"
 
       - name: Debug
