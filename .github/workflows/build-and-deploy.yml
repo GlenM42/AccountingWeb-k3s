@@ -24,6 +24,9 @@ jobs:
           echo "image_ref=$IMAGE" >> $GITHUB_OUTPUT
           echo "Generated image: $IMAGE"
 
+      - name: Debug: cat GITHUB_OUTPUT
+        run: cat $GITHUB_OUTPUT    
+
   build:
     name: Build and Push Image
     runs-on: [self-hosted, k3s]
