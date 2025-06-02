@@ -14,16 +14,13 @@ jobs:
     outputs:
       image_ref: ${{ steps.generate.outputs.image_ref }}
     steps:
-      - name: Set up custom GITHUB_OUTPUT
-        run: mkdir -p /tmp/github
-        env:
-          GITHUB_ENV_DIR: /tmp/github
-
       - name: Generate full image reference
         id: generate
         env:
           GITHUB_OUTPUT: /tmp/github/output
         run: |
+          mkdir -p /tmp/github
+          touch $GITHUB_OUTPUT
           RAW_BRANCH="${GITHUB_REF##*/}"
           BRANCH=$(echo "$RAW_BRANCH" | tr '[:upper:]' '[:lower:]' | tr -c 'a-z0-9' '-' | sed 's/--*/-/g' | sed 's/^-//' | sed 's/-$//')
           DATE=$(date +%F)
