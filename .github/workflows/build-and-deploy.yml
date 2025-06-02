@@ -14,20 +14,25 @@ jobs:
     outputs:
       image_ref: ${{ steps.generate.outputs.image_ref }}
     steps:
+      - name: Set up custom GITHUB_OUTPUT
+        run: mkdir -p /tmp/github
+        env:
+          GITHUB_ENV_DIR: /tmp/github
+
       - name: Generate full image reference
         id: generate
         env:
-          GITHUB_OUTPUT: $HOME/github_output.txt
+          GITHUB_OUTPUT: /tmp/github/output
         run: |
           RAW_BRANCH="${GITHUB_REF##*/}"
           BRANCH=$(echo "$RAW_BRANCH" | tr '[:upper:]' '[:lower:]' | tr -c 'a-z0-9' '-' | sed 's/--*/-/g' | sed 's/^-//' | sed 's/-$//')
           DATE=$(date +%F)
           IMAGE="${{ secrets.REGISTRY_URL }}/accountingweb:${DATE}--${BRANCH}"
-          echo "image_ref=$IMAGE" >> "$HOME/github_output.txt"
+          echo "image_ref=$IMAGE" >> $GITHUB_OUTPUT
           echo "Generated image: $IMAGE"
 
-      - name: Debug
-        run: cat $GITHUB_OUTPUT    
+      - name: Debug output
+        run: cat /tmp/github/output
 
   build:
     name: Build and Push Image
