@@ -2,9 +2,9 @@ name: Build and Deploy
 
 on:
   push:
-    branches: [ "**" ]
+    branches: ["**"]
   pull_request:
-    branches: [ "**" ]
+    branches: ["**"]
   workflow_dispatch:
 
 jobs:
@@ -13,23 +13,23 @@ jobs:
     runs-on: [self-hosted, k3s]
     outputs:
       image_ref: ${{ steps.generate.outputs.image_ref }}
+
     steps:
       - name: Generate full image reference
         id: generate
-        env:
-          GITHUB_OUTPUT: /tmp/github/output
+        shell: bash
         run: |
-          mkdir -p /tmp/github
-          touch $GITHUB_OUTPUT
           RAW_BRANCH="${GITHUB_REF##*/}"
-          BRANCH=$(echo "$RAW_BRANCH" | tr '[:upper:]' '[:lower:]' | tr -c 'a-z0-9' '-' | sed 's/--*/-/g' | sed 's/^-//' | sed 's/-$//')
+          BRANCH=$(echo "$RAW_BRANCH" | tr '[:upper:]' '[:lower:]' \
+                   | tr -c 'a-z0-9' '-' | sed 's/--*/-/g;s/^-//;s/-$//')
           DATE=$(date +%F)
           IMAGE="${{ secrets.REGISTRY_URL }}/accountingweb:${DATE}--${BRANCH}"
-          echo "image_ref=$IMAGE" >> $GITHUB_OUTPUT
+
+          echo "image_ref=$IMAGE" >> "$GITHUB_OUTPUT"
           echo "Generated image: $IMAGE"
 
       - name: Debug output
-        run: cat /tmp/github/output
+        run: echo "Resolved image ref: ${{ steps.generate.outputs.image_ref }}"
 
   build:
     name: Build and Push Image
@@ -37,35 +37,38 @@ jobs:
     needs: prepare
 
     steps:
-    - name: Checkout source code
-      uses: actions/checkout@v4
+      - name: Checkout source code
+        uses: actions/checkout@v4
 
-    - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v3
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
 
-    - name: Log in to private Docker registry
-      run: echo "${{ secrets.REGISTRY_PASSWORD }}" | docker login ${{ secrets.REGISTRY_URL }} -u ${{ secrets.REGISTRY_USERNAME }} --password-stdin
+      - name: Log in to private Docker registry
+        run: echo "${{ secrets.REGISTRY_PASSWORD }}" | \
+             docker login ${{ secrets.REGISTRY_URL }} \
+             -u ${{ secrets.REGISTRY_USERNAME }} --password-stdin
 
-    - name: Debug image ref
-      run: |
-        IMAGE="${{ needs.prepare.outputs.image_ref }}"
-        echo "Resolved image ref: $IMAGE"
+      - name: Debug image ref
+        run: |
+          IMAGE="${{ needs.prepare.outputs.image_ref }}"
+          echo "Resolved image ref: $IMAGE"
 
-    - name: Build and push Docker image
-      run: |
-        IMAGE="${{ needs.prepare.outputs.image_ref }}"
-        docker build -t $IMAGE .
-        docker push $IMAGE
+      - name: Build and push Docker image
+        run: |
+          IMAGE="${{ needs.prepare.outputs.image_ref }}"
+          docker build -t "$IMAGE" .
+          docker push "$IMAGE"
 
   deploy:
     name: Deploy to k3s
     runs-on: [self-hosted, k3s]
     needs: [prepare, build]
-    if: github.ref == 'refs/heads/main'  # Optional: only deploy on main
+    if: github.ref == 'refs/heads/main'
 
     steps:
-    - name: Deploy image to cluster
-      run: |
-        IMAGE="${{ needs.prepare.outputs.image_ref }}"
-        kubectl set image deployment/django-app accountingweb-container=$IMAGE
-        kubectl rollout status deployment/django-app
+      - name: Deploy image to cluster
+        run: |
+          IMAGE="${{ needs.prepare.outputs.image_ref }}"
+          kubectl set image deployment/django-app \
+                   accountingweb-container="$IMAGE"
+          kubectl rollout status deployment/django-app
