@@ -83,8 +83,12 @@ def new_transaction_view(request):
 
 def income_statement_view(request):
     # Dynamically fetch revenue and expense accounts from the Account model
-    revenue_details = Account.objects.filter(account_type='revenue').values('account_name', 'total_value')
-    expense_details = Account.objects.filter(account_type='expense').values('account_name', 'total_value')
+    revenue_qs = Account.objects.filter(account_type='revenue').order_by("-total_value").values('account_name', 'total_value')
+    expense_qs = Account.objects.filter(account_type='expense').order_by("-total_value").values('account_name', 'total_value')
+
+    # Creating lists is better handling
+    revenue_details = list(revenue_qs)
+    expense_details = list(expense_qs)
 
     # Calculate total revenue and total expenses
     total_revenue = sum(item['total_value'] for item in revenue_details)

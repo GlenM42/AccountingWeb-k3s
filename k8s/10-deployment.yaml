@@ -4,6 +4,12 @@ metadata:
   name: django-app
 spec:
   replicas: 2
+  revisionHistoryLimit: 3
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
   selector:
     matchLabels:
       app: django-app
@@ -16,7 +22,7 @@ spec:
         - name: regcred
       containers:
       - name: accountingweb-container
-        image: fs.panga-ghost.ts.net:5443/accountingweb:v3.9
+        image: registry/placeholder:latest # Will be patched by CI
         imagePullPolicy: Always
         ports:
         - containerPort: 8000

@@ -4,16 +4,17 @@ metadata:
   name: django-ingress
   namespace: default
   annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /
+    traefik.ingress.kubernetes.io/router.entrypoints: web
 spec:
+  ingressClassName: traefik
   rules:
-  - host: mso.miasnychenko.com
-    http:
-      paths:
-      - path: /
-        pathType: Prefix
-        backend:
-          service:
-            name: django-service
-            port:
-              number: 80
+    - host: mso.miasnychenko.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: django-service
+                port:
+                  number: 80
