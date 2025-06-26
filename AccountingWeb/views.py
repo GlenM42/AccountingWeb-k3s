@@ -1,5 +1,5 @@
 from decimal import Decimal
-from django.shortcuts import redirect
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 import json
 from django.contrib.auth.views import LoginView
 from django.shortcuts import render, redirect
@@ -19,13 +19,13 @@ def login(request):
 
 def balance_sheet_view(request):
     # Retrieve accounts based on types
-    assets = Account.objects.filter(account_type='asset')
-    liabilities = Account.objects.filter(account_type='liability')
+    assets = Account.objects.filter(account_type='asset').order_by('account_name')
+    liabilities = Account.objects.filter(account_type='liability').order_by('account_name')
     equity_accounts = Account.objects.filter(account_type='equity')
 
     # Include revenue and expenses accounts in the equity column
     revenue_expenses = Account.objects.filter(account_type__in=['revenue', 'expense'])
-    equity_accounts = equity_accounts.union(revenue_expenses)
+    equity_accounts = equity_accounts.union(revenue_expenses).order_by('account_name')
 
     total_assets = sum(asset.total_value for asset in assets)
     total_liabilities = sum(liability.total_value for liability in liabilities)
@@ -40,10 +40,24 @@ def balance_sheet_view(request):
         'total_equity': total_equity,
     })
 
-
 def transaction_history_view(request):
-    transactions = Transaction.objects.all()
-    return render(request, 'transaction_history.html', {'transactions': transactions})
+    transaction_qs = Transaction.objects.all().order_by("-transaction_date")
+
+    paginator   = Paginator(transaction_qs, 50)     # 50 items per page
+    page_number = request.GET.get("page")           # ?page=2
+
+    try:
+        transactions = paginator.page(page_number)
+    except PageNotAnInteger:                        # page=None or garbage
+        transactions = paginator.page(1)
+    except EmptyPage:                               # page too high
+        transactions = paginator.page(paginator.num_pages)
+
+    return render(
+        request,
+        "transaction_history.html",
+        {"transactions": transactions}              # this is now a *Page* object
+    )
 
 
 def new_transaction_view(request):
@@ -75,8 +89,8 @@ def new_transaction_view(request):
 
         return redirect('transaction_history')  # Redirect to the transaction history page or any other page you want
 
-    # Retrieve the list of account names for the drop-down
-    account_names = [account.account_name for account in Account.objects.all()]
+    # Retrieve the list of account names for the drop-down in alphabetical order
+    account_names = [account.account_name for account in Account.objects.order_by('account_name')]
 
     return render(request, 'new_transaction.html', {'account_names': account_names})
 

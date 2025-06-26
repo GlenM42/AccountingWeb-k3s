@@ -25,6 +25,21 @@
         
 		<link rel="stylesheet" href="{% static 'html5up-stellar/assets/css/main.css' %}" />
 		<noscript><link rel="stylesheet" href="{% static 'html5up-stellar/assets/css/noscript.css' %}" /></noscript>
+        <style>
+            .page-btn{
+                min-width:auto;
+                padding:.3em .7em;
+                line-height:2.2em;
+                font-size:.8em;
+            }
+            .page-btn-disabled{
+                min-width:auto;
+                padding:.3em .7em;
+                line-height:2.2em;
+                font-size:.8em;
+                opacity:.5;
+            }
+        </style>
 	</head>
 	<body class="is-preload">
 
@@ -65,27 +80,48 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            {% for transaction in transactions reversed %}
-                                                <tr>
-                                                    <td>{{ transaction.debit }} / {{ transaction.credit }}</td>
-                                                    <td>{{ transaction.description }}</td>
-                                                    <td>{{ transaction.dollar_amount }}</td>
-                                                    <td>{{ transaction.transaction_date }}</td>
-                                                </tr>
+                                            {% for tx in transactions %}
+                                            <tr>
+                                                <td>{{ tx.debit }} / {{ tx.credit }}</td>
+                                                <td>{{ tx.description }}</td>
+                                                <td>{{ tx.dollar_amount }}</td>
+                                                <td>{{ tx.transaction_date }}</td>
+                                            </tr>
+                                            {% empty %}
+                                            <tr><td colspan="4">No transactions yet.</td></tr>
                                             {% endfor %}
                                         </tbody>
                                     </table>
                                 </div>
-                                <p>Here is the website navigation:</p>
-                                <ul>
-                                    <li><a href="{% url 'home' %}">Home</a></li>
-                                    <li><a href="{% url 'balance_sheet' %}">Balance Sheet</a></li>
-                                    <li><a href="{% url 'income_statement' %}">Income Statement</a></li>
-                                    <li><a href="{% url 'new_transaction' %}">New Transaction</a></li>
-                                    <li><a href="{% url 'transaction_history' %}">Transaction History</a></li>
-                                    <li><a href="{% url 'summary' %}">Summary</a></li>
-                                    <li><a href="{% url 'admin:index' %}">Admin</a></li>
+                                {# -------- pagination bar -------- #}
+                                {% if transactions.paginator.num_pages > 1 %}
+                                <ul class="actions pagination" style="justify-content:center">
+
+                                    {# Previous link #}
+                                    {% if transactions.has_previous %}
+                                        <li><a href="?page={{ transactions.previous_page_number }}" class="button page-btn">&laquo;&nbsp;Prev</a></li>
+                                    {% else %}
+                                        <li><span class="button page-btn-disabled">&laquo;&nbsp;Prev</span></li>
+                                    {% endif %}
+
+                                    {# Page numbers (sliding window ±2) #}
+                                    {% for num in transactions.paginator.page_range %}
+                                        {% if num == transactions.number %}
+                                            <li><span class="button page-btn">{{ num }}</span></li>
+                                        {% elif num >= transactions.number|add:"-2" and num <= transactions.number|add:"2" %}
+                                            <li><a href="?page={{ num }}" class="button page-btn">{{ num }}</a></li>
+                                        {% endif %}
+                                    {% endfor %}
+
+                                    {# Next link #}
+                                    {% if transactions.has_next %}
+                                        <li><a href="?page={{ transactions.next_page_number }}" class="button page-btn">Next&nbsp;&raquo;</a></li>
+                                    {% else %}
+                                        <li><span class="button page-btn-disabled">Next&nbsp;&raquo;</span></li>
+                                    {% endif %}
+
                                 </ul>
+                                {% endif %}
                             </section>
                     {% else %}
                         <p>You are not an authenticated user! No transaction history for you.</p>

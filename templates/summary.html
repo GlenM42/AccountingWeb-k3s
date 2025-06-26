@@ -228,16 +228,6 @@
                        fetchGraphData(defaultAccount, defaultTimeframe);
                     });
                 </script>
-                <p>Here is the website navigation:</p>
-                <ul>
-                    <li><a href="{% url 'home' %}">Home</a></li>
-                    <li><a href="{% url 'balance_sheet' %}">Balance Sheet</a></li>
-                    <li><a href="{% url 'income_statement' %}">Income Statement</a></li>
-                    <li><a href="{% url 'new_transaction' %}">New Transaction</a></li>
-                    <li><a href="{% url 'transaction_history' %}">Transaction History</a></li>
-                    <li><a href="{% url 'summary' %}">Summary</a></li>
-                    <li><a href="{% url 'admin:index' %}">Admin</a></li>
-                </ul>
             </section>
         {% else %}
             <p>You are not logged in! Please <a href="/login">log in</a> to view the summary dashboard.</p>
