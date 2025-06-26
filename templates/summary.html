@@ -75,13 +75,11 @@
 <body class="is-preload">
 <div id="wrapper">
 
-    <!-- Mobile nav toggle -->
-    <a href="#nav" class="navPanelToggle"><span class="icon solid fa-bars"></span></a>
-
     <!-- Header -->
     <header id="header">
         <h1>Summary</h1>
         <p><i>In the shadows of Zürich, fortunes whisper their secrets</i></p>
+        <nav><a href="#menu">Menu</a></nav>
     </header>
 
     <nav id="nav">
@@ -97,10 +95,10 @@
 
     <!-- Main -->
     <div id="main">
-        {% if user.is_authenticated %}
-
             <section id="content" class="main">
                 <span class="image main"><img src="{% static 'html5up-stellar/images/pic08.jpg' %}" alt="" /></span>
+
+                {% if user.is_authenticated %}
 
                 <!-- Time Frame Slider -->
                 <section id="timeframe-section">
@@ -231,10 +229,12 @@
                        fetchGraphData(defaultAccount, defaultTimeframe);
                     });
                 </script>
+
+            {% else %}
+                <p>You are not logged in! Please <a href="/login">log in</a> to view the summary dashboard.</p>
+            {% endif %}
+
             </section>
-        {% else %}
-            <p>You are not logged in! Please <a href="/login">log in</a> to view the summary dashboard.</p>
-        {% endif %}
     </div>
 
     <!-- Footer -->
@@ -274,5 +274,21 @@
 <script src="{% static 'html5up-stellar/assets/js/breakpoints.min.js' %}"></script>
 <script src="{% static 'html5up-stellar/assets/js/util.js' %}"></script>
 <script src="{% static 'html5up-stellar/assets/js/main.js' %}"></script>
+<script src="{% static 'html5up-stellar/assets/js/menu.js' %}"></script>
+
+<nav id="menu">
+    <div class="inner">
+        <h2>Menu</h2>
+        <ul class="links">
+            <li><a href="{% url 'home' %}">Home</a></li>
+            <li><a href="{% url 'balance_sheet' %}">Balance Sheet</a></li>
+            <li><a href="{% url 'transaction_history' %}">Transaction History</a></li>
+            <li><a href="{% url 'new_transaction' %}">New Transaction</a></li>
+            <li><a href="{% url 'income_statement' %}">Income Statement</a></li>
+            <li><a href="{% url 'summary' %}">Summary</a></li>
+        </ul>
+        <a href="#" class="close">Close</a>
+    </div>
+</nav>
 </body>
 </html>

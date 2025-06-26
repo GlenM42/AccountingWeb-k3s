@@ -30,17 +30,14 @@
 		<!-- Wrapper -->
 			<div id="wrapper">
 
-                <!-- Mobile nav toggle -->
-                <a href="#nav" class="navPanelToggle"><span class="icon solid fa-bars"></span></a>
-
-
 				<!-- Header -->
 					<header id="header" class="alt">
 						<span class="logo"><img src="{% static 'html5up-stellar/images/logo.png' %}" alt="" /></span>
 						<h1>My Swiss Offshore</h1>
                         <p>A small accounting project by <br>
                                 one Chicago student</p>
-					</header>
+					    <nav><a href="#menu">Menu</a></nav>
+                    </header>
 
 				<!-- Nav -->
 					<nav id="nav">
@@ -117,6 +114,22 @@
 			<script src="{% static 'html5up-stellar/assets/js/breakpoints.min.js' %}"></script>
 			<script src="{% static 'html5up-stellar/assets/js/util.js' %}"></script>
 			<script src="{% static 'html5up-stellar/assets/js/main.js' %}"></script>
+            <script src="{% static 'html5up-stellar/assets/js/menu.js' %}"></script>
 
-	</body>
+        <nav id="menu">
+            <div class="inner">
+                <h2>Menu</h2>
+                <ul class="links">
+                    <li><a href="{% url 'home' %}">Home</a></li>
+                    <li><a href="{% url 'balance_sheet' %}">Balance Sheet</a></li>
+                    <li><a href="{% url 'transaction_history' %}">Transaction History</a></li>
+                    <li><a href="{% url 'new_transaction' %}">New Transaction</a></li>
+                    <li><a href="{% url 'income_statement' %}">Income Statement</a></li>
+                    <li><a href="{% url 'summary' %}">Summary</a></li>
+                </ul>
+                <a href="#" class="close">Close</a>
+            </div>
+        </nav>
+
+    </body>
 </html>

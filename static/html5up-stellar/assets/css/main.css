@@ -3783,3 +3783,125 @@ input, select, textarea {
 			}
 
 		}
+
+	/* ==========================================================
+   Solid-State slide-in menu (only the bits Stellar lacks)
+   ----------------------------------------------------------
+   ▸  Requires the markup shown in Fix #2:
+       <header>…<nav><a href="#menu">Menu</a></nav></header>
+       <nav id="menu">…</nav>
+   ▸  Place this AFTER the original Stellar CSS so it overrides
+      any duplicate selectors without needing !important.
+   ======================================================= */
+
+	/* --- Background blur when the drawer is open ------------- */
+	#page-wrapper {
+		transition: filter 0.25s ease;            /* smooth blur */
+	}
+	body.is-menu-visible #page-wrapper {
+		filter: blur(1.5px);
+	}
+
+	/* --- Drawer container ------------------------------------ */
+	#menu {
+		position: fixed;
+		inset: 0;                                 /* top/left/right/bottom 0 */
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		background: rgba(46,49,65,.80);           /* translucent dark */
+		pointer-events: none;                     /* disabled until shown */
+		opacity: 0;
+		visibility: hidden;
+		transition: opacity .35s ease, visibility .35s ease;
+		user-select: none;
+		-webkit-tap-highlight-color: transparent;
+	}
+
+	/* --- Inner card ------------------------------------------ */
+	#menu .inner {
+		position: relative;
+		width: 18em;                              /* drawer width */
+		max-width: 100%;
+		padding: 2.5em 1.5em .5em;
+		background: #4c5c96;                      /* matches Stellar accent */
+		border-radius: 5px;
+		opacity: 0;
+		transform: translateY(.5em);
+		transition: opacity .35s ease, transform .35s ease;
+		overflow-x: hidden;                       /* keep it tidy on mobile */
+	}
+
+	/* --- Heading --------------------------------------------- */
+	#menu h2 {
+		margin: 0 0 1.5em;
+		padding-bottom: 1em;
+		border-bottom: 2px solid rgba(255,255,255,.125);
+		font-size: 0.9em;
+		font-family: Raleway, Helvetica, sans-serif;
+		letter-spacing: .1em;
+		text-transform: uppercase;
+	}
+
+	/* --- Close button ( × ) ---------------------------------- */
+	#menu .close {
+		position: absolute;
+		top: 0; right: 0;
+		width: 4em; height: 4em;
+		text-indent: 4em;                         /* hides the text */
+		overflow: hidden;
+		background: url("images/close.svg") 75% 25% / 2em 2em no-repeat;
+		border: none;
+		cursor: pointer;
+	}
+
+	/* --- Link list ------------------------------------------- */
+	#menu .links      { list-style: none; margin: 0 0 1.5em; padding: 0; }
+	#menu .links li   { margin: 0; }
+	#menu .links a    {
+		display: block;
+		padding: .75em 0;
+		border-radius: 5px;
+		font-size: .8em;
+		font-family: Raleway, Helvetica, sans-serif;
+		letter-spacing: .1em;
+		text-transform: uppercase;
+		font-weight: 200;
+	}
+	#menu .links a:hover { background: #45558d; }
+
+	/* --- Mobile-only tweaks ---------------------------------- */
+	@media screen and (max-width: 736px) {
+		#menu .inner {
+			max-height: 100%;
+			overflow-y: auto;
+		}
+		#menu .close {
+			background-size: 1.5em 1.5em;
+		}
+	}
+
+	/* --- Toggle visible state (set by menu.js) ----------------*/
+	body.is-menu-visible #menu {
+		pointer-events: auto;
+		opacity: 1;
+		visibility: visible;
+	}
+	body.is-menu-visible #menu .inner {
+		opacity: 1;
+		transform: translateY(0);
+	}
+
+	/* ----------------------------------------------------------
+	   Optional – give the “Menu” button in the fixed header the
+	   subtle boxed look used in Solid-State.  Comment out if you
+	   prefer Stellar’s default styling.
+	   -------------------------------------------------------- */
+	#header nav a[href="#menu"] {
+		padding: 0 1.35em;
+		border-radius: 5px;
+		box-shadow: inset 0 0 0 2px rgba(255,255,255,.125);
+		transition: background-color .2s ease-in-out;
+	}
+	#header nav a[href="#menu"]:hover   { background: rgba(255,255,255,.025); }
+	#header nav a[href="#menu"]:active  { background: rgba(255,255,255,.075); }
