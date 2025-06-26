@@ -33,13 +33,11 @@
 		<!-- Wrapper -->
 			<div id="wrapper">
 
-                <!-- Mobile nav toggle -->
-                <a href="#nav" class="navPanelToggle"><span class="icon solid fa-bars"></span></a>
-
 				<!-- Header -->
 					<header id="header">
 						<h1>This is the New Transaction</h1>
                         <p><i>Where the mist meets the water, old wealth whispers through the pines</i></p>
+                        <nav><a href="#menu">Menu</a></nav>
                     </header>
             
                     <nav id="nav">
@@ -87,7 +85,7 @@
                                     
                                         <input type="submit" value="Submit"><br>
                                     {% else %}
-                                        <p>You are not an authenticated user! No new transaction for you.</p>
+                                        <p>You are not logged in! Please <a href="/login">log in</a> to view the summary dashboard.</p>
                                     {% endif %}
 
                                 </form>
@@ -132,6 +130,22 @@
 			<script src="{% static 'html5up-stellar/assets/js/breakpoints.min.js' %}"></script>
 			<script src="{% static 'html5up-stellar/assets/js/util.js' %}"></script>
 			<script src="{% static 'html5up-stellar/assets/js/main.js' %}"></script>
+            <script src="{% static 'html5up-stellar/assets/js/menu.js' %}"></script>
 
-	</body>
+	    <nav id="menu">
+            <div class="inner">
+                <h2>Menu</h2>
+                <ul class="links">
+                    <li><a href="{% url 'home' %}">Home</a></li>
+                    <li><a href="{% url 'balance_sheet' %}">Balance Sheet</a></li>
+                    <li><a href="{% url 'transaction_history' %}">Transaction History</a></li>
+                    <li><a href="{% url 'new_transaction' %}">New Transaction</a></li>
+                    <li><a href="{% url 'income_statement' %}">Income Statement</a></li>
+                    <li><a href="{% url 'summary' %}">Summary</a></li>
+                </ul>
+                <a href="#" class="close">Close</a>
+            </div>
+        </nav>
+
+    </body>
 </html>

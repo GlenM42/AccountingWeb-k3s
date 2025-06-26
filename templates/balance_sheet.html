@@ -60,13 +60,11 @@
 		<!-- Wrapper -->
 			<div id="wrapper">
 
-                <!-- Mobile nav toggle -->
-                <a href="#nav" class="navPanelToggle"><span class="icon solid fa-bars"></span></a>
-
 				<!-- Header -->
 					<header id="header">
 						<h1>This is the Balance Sheet</h1>
                         <p><i>Somewhere in these mountains lies our gold</i></p>
+                        <nav><a href="#menu">Menu</a></nav>
 					</header>
 
                     <nav id="nav">
@@ -82,94 +80,91 @@
 
 				<!-- Main -->
 					<div id="main">
-                    
-                        {% if user.is_authenticated %}
 
 						<!-- Content -->
 							<section id="content" class="main">
 								<span class="image main"><img src="{% static 'html5up-stellar/images/pic04.jpg' %}" alt="" /></span>
                                 
+                                {% if user.is_authenticated %}
+
                                 <div class="tables-flex">
                                     <div class="table-wrapper">
-                                    <h2>Assets</h2>
-                                    <table>
-                                        <thead>
-                                            <tr>
-                                                <th>Name</th>
-                                                <th>Amount</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {% for asset in assets %}
+                                        <h2>Assets</h2>
+                                        <table>
+                                            <thead>
                                                 <tr>
-                                                    <td>{{ asset.account_name }}</td>
-                                                    <td>{{ asset.total_value }}</td>
+                                                    <th>Name</th>
+                                                    <th>Amount</th>
                                                 </tr>
-                                            {% endfor %}
-                                        </tbody>
-                                        <tfoot>
-                                            <tr>
-                                                <td>Total: <strong>${{ total_assets }}</strong></td>
-                                            </tr>
-                                        </tfoot>
-                                    </table>
+                                            </thead>
+                                            <tbody>
+                                                {% for asset in assets %}
+                                                    <tr>
+                                                        <td>{{ asset.account_name }}</td>
+                                                        <td>{{ asset.total_value }}</td>
+                                                    </tr>
+                                                {% endfor %}
+                                            </tbody>
+                                            <tfoot>
+                                                <tr>
+                                                    <td>Total: <strong>${{ total_assets }}</strong></td>
+                                                </tr>
+                                            </tfoot>
+                                        </table>
                                     </div>
-
                                     <div class="table-wrapper">
-                                    <h2>Liabilities</h2>
-                                    <table style="overflow-x: auto">
-                                        <thead>
-                                            <tr>
-                                                <th>Name</th>
-                                                <th>Amount</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {% for liability in liabilities %}
+                                        <h2>Liabilities</h2>
+                                        <table style="overflow-x: auto">
+                                            <thead>
                                                 <tr>
-                                                    <td>{{ liability.account_name }}</td>
-                                                    <td>{{ liability.total_value }}</td>
+                                                    <th>Name</th>
+                                                    <th>Amount</th>
                                                 </tr>
-                                            {% endfor %}
-                                        </tbody>
-                                        <tfoot>
-                                            <tr>
-                                                <td>Total: <strong>${{ total_liabilities }}</strong></td>
-                                            </tr>
-                                        </tfoot>
-                                    </table>
-                                </div>
-                                
+                                            </thead>
+                                            <tbody>
+                                                {% for liability in liabilities %}
+                                                    <tr>
+                                                        <td>{{ liability.account_name }}</td>
+                                                        <td>{{ liability.total_value }}</td>
+                                                    </tr>
+                                                {% endfor %}
+                                            </tbody>
+                                            <tfoot>
+                                                <tr>
+                                                    <td>Total: <strong>${{ total_liabilities }}</strong></td>
+                                                </tr>
+                                            </tfoot>
+                                        </table>
+                                    </div>
                                     <div class="table-wrapper">
-                                    <h2>Equity</h2>
-                                    <table style="overflow-x: auto">
-                                        <thead>
-                                            <tr>
-                                                <th>Name</th>
-                                                <th>Amount</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {% for equity_account in equity_accounts %}
+                                        <h2>Equity</h2>
+                                        <table style="overflow-x: auto">
+                                            <thead>
                                                 <tr>
-                                                    <td>{{ equity_account.account_name }}</td>
-                                                    <td>{{ equity_account.total_value }}</td>
+                                                    <th>Name</th>
+                                                    <th>Amount</th>
                                                 </tr>
-                                            {% endfor %}
-                                        </tbody>
-                                        <tfoot>
-                                            <tr>
-                                                <td>Total: <strong>${{ total_equity }}</strong></td>
-                                            </tr>
-                                        </tfoot>
-                                    </table>
+                                            </thead>
+                                            <tbody>
+                                                {% for equity_account in equity_accounts %}
+                                                    <tr>
+                                                        <td>{{ equity_account.account_name }}</td>
+                                                        <td>{{ equity_account.total_value }}</td>
+                                                    </tr>
+                                                {% endfor %}
+                                            </tbody>
+                                            <tfoot>
+                                                <tr>
+                                                    <td>Total: <strong>${{ total_equity }}</strong></td>
+                                                </tr>
+                                            </tfoot>
+                                        </table>
+                                    </div>
                                 </div>
-                            </div>
+                                {% else %}
+                                    <p>You are not logged in! Please <a href="/login">log in</a> to view the summary dashboard.</p>
+                                {% endif %}
 							</section>
-                        {% else %}
-                            <p>You are not an authenticated user! No statements for you.</p>
-                        {% endif %}
-
                     </div>
 
 				<!-- Footer -->
@@ -210,6 +205,22 @@
 			<script src="{% static 'html5up-stellar/assets/js/breakpoints.min.js' %}"></script>
 			<script src="{% static 'html5up-stellar/assets/js/util.js' %}"></script>
 			<script src="{% static 'html5up-stellar/assets/js/main.js' %}"></script>
+			<script src="{% static 'html5up-stellar/assets/js/menu.js' %}"></script>
 
-	</body>
+	    <nav id="menu">
+            <div class="inner">
+                <h2>Menu</h2>
+                <ul class="links">
+                    <li><a href="{% url 'home' %}">Home</a></li>
+                    <li><a href="{% url 'balance_sheet' %}">Balance Sheet</a></li>
+                    <li><a href="{% url 'transaction_history' %}">Transaction History</a></li>
+                    <li><a href="{% url 'new_transaction' %}">New Transaction</a></li>
+                    <li><a href="{% url 'income_statement' %}">Income Statement</a></li>
+                    <li><a href="{% url 'summary' %}">Summary</a></li>
+                </ul>
+                <a href="#" class="close">Close</a>
+            </div>
+        </nav>
+
+    </body>
 </html>

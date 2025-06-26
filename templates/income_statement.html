@@ -31,13 +31,11 @@
 		<!-- Wrapper -->
 			<div id="wrapper">
 
-                <!-- Mobile nav toggle -->
-                <a href="#nav" class="navPanelToggle"><span class="icon solid fa-bars"></span></a>
-
 				<!-- Header -->
 					<header id="header">
 						<h1>This is the Income Statement</h1>
                         <p><i>In the depths of Lake Geneva, fortunes drift unseen</i></p>
+                        <nav><a href="#menu">Menu</a></nav>
 					</header>
 
                     <nav id="nav">
@@ -55,56 +53,57 @@
 					<div id="main">
         
                         <!-- Content -->
-                        {% if user.is_authenticated %}
                             <section id="content" class="main">
                                 <span class="image main"><img src="{% static 'html5up-stellar/images/pic00.jpg' %}" alt="" /></span>
+
+                                {% if user.is_authenticated %}
                                 <!-- Financial Data Table -->
                                 <div class="table-wrapper">
-                                <table>
-                                    <thead>
-                                        <tr>
-                                            <th>Category</th>
-                                            <th>Total Amount</th>
-                                            <th>Relative Weight (%)</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td>Total Revenue</td>
-                                            <td>${{ total_revenue|floatformat:2 }}</td>
-                                            <td>100%</td>
-                                        </tr>
-                                        {% for revenue in revenue_details %}
-                                        <tr>
-                                            <td style="font-style: italic; padding-left: 50px;">{{ revenue.account_name }}</td>
-                                            <td>${{ revenue.total_value|floatformat:2 }}</td>
-                                            <td>{{ revenue.relative_weight|floatformat:2 }}%</td>
-                                        </tr>
-                                        {% endfor %}
-                                        <tr>
-                                            <td>Total Expenses</td>
-                                            <td>${{ total_expenses|floatformat:2 }}</td>
-                                            <td>100%</td>
-                                        </tr>
-                                        {% for expense in expense_details %}
-                                        <tr>
-                                            <td style="font-style: italic; padding-left: 50px;">{{ expense.account_name }}</td>
-                                            <td>${{ expense.total_value|floatformat:2 }}</td>
-                                            <td>{{ expense.relative_weight|floatformat:2 }}%</td>
-                                        </tr>
-                                        {% endfor %}
-                                        <tr>
-                                            <td><strong>Profit</strong></td>
-                                            <td><strong>${{ profit|floatformat:2 }}</strong></td>
-                                            <td><strong>{{ profit_weight|floatformat:2 }}%</strong></td>
-                                        </tr>
-                                    </tbody>
-                                </table>
+                                    <table>
+                                        <thead>
+                                            <tr>
+                                                <th>Category</th>
+                                                <th>Total Amount</th>
+                                                <th>Relative Weight (%)</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>Total Revenue</td>
+                                                <td>${{ total_revenue|floatformat:2 }}</td>
+                                                <td>100%</td>
+                                            </tr>
+                                            {% for revenue in revenue_details %}
+                                            <tr>
+                                                <td style="font-style: italic; padding-left: 50px;">{{ revenue.account_name }}</td>
+                                                <td>${{ revenue.total_value|floatformat:2 }}</td>
+                                                <td>{{ revenue.relative_weight|floatformat:2 }}%</td>
+                                            </tr>
+                                            {% endfor %}
+                                            <tr>
+                                                <td>Total Expenses</td>
+                                                <td>${{ total_expenses|floatformat:2 }}</td>
+                                                <td>100%</td>
+                                            </tr>
+                                            {% for expense in expense_details %}
+                                            <tr>
+                                                <td style="font-style: italic; padding-left: 50px;">{{ expense.account_name }}</td>
+                                                <td>${{ expense.total_value|floatformat:2 }}</td>
+                                                <td>{{ expense.relative_weight|floatformat:2 }}%</td>
+                                            </tr>
+                                            {% endfor %}
+                                            <tr>
+                                                <td><strong>Profit</strong></td>
+                                                <td><strong>${{ profit|floatformat:2 }}</strong></td>
+                                                <td><strong>{{ profit_weight|floatformat:2 }}%</strong></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
                                 </div>
+                            {% else %}
+                                <p>You are not logged in! Please <a href="/login">log in</a> to view the summary dashboard.</p>
+                            {% endif %}
                             </section>
-                        {% else %}
-                            <p>You are not an authenticated user! Access is denied.</p>
-                        {% endif %}
                     </div>
 
 				<!-- Footer -->
@@ -145,6 +144,22 @@
 			<script src="{% static 'html5up-stellar/assets/js/breakpoints.min.js' %}"></script>
 			<script src="{% static 'html5up-stellar/assets/js/util.js' %}"></script>
 			<script src="{% static 'html5up-stellar/assets/js/main.js' %}"></script>
+            <script src="{% static 'html5up-stellar/assets/js/menu.js' %}"></script>
 
-	</body>
+	    <nav id="menu">
+            <div class="inner">
+                <h2>Menu</h2>
+                <ul class="links">
+                    <li><a href="{% url 'home' %}">Home</a></li>
+                    <li><a href="{% url 'balance_sheet' %}">Balance Sheet</a></li>
+                    <li><a href="{% url 'transaction_history' %}">Transaction History</a></li>
+                    <li><a href="{% url 'new_transaction' %}">New Transaction</a></li>
+                    <li><a href="{% url 'income_statement' %}">Income Statement</a></li>
+                    <li><a href="{% url 'summary' %}">Summary</a></li>
+                </ul>
+                <a href="#" class="close">Close</a>
+            </div>
+        </nav>
+
+    </body>
 </html>
