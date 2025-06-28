@@ -4,8 +4,14 @@ import json
 from django.contrib.auth.views import LoginView
 from django.shortcuts import render, redirect
 from django.http import JsonResponse
+from django.utils import timezone
 from .calculations import calculate_account_balance_over_time
 from .models import Account, Transaction
+from .utils import parse_date, snapshot_details, ledger_details
+import calendar
+from datetime import date, timedelta
+
+CUTOFF = date(2023, 11, 26)
 
 
 def home_view(request):
@@ -96,36 +102,73 @@ def new_transaction_view(request):
 
 
 def income_statement_view(request):
-    # Dynamically fetch revenue and expense accounts from the Account model
-    revenue_qs = Account.objects.filter(account_type='revenue').order_by("-total_value").values('account_name', 'total_value')
-    expense_qs = Account.objects.filter(account_type='expense').order_by("-total_value").values('account_name', 'total_value')
+    # 1. window
+    first_txn = Transaction.objects.order_by("transaction_date").first()
+    today     = timezone.localdate()
 
-    # Creating lists is better handling
-    revenue_details = list(revenue_qs)
-    expense_details = list(expense_qs)
+    start_date = parse_date(request.GET.get("start_date"), first_txn.transaction_date.date() if first_txn else today)
+    end_date   = parse_date(request.GET.get("end_date"), today)
+    if start_date > end_date:
+        start_date, end_date = end_date, start_date
 
-    # Calculate total revenue and total expenses
-    total_revenue = sum(item['total_value'] for item in revenue_details)
-    total_expenses = sum(item['total_value'] for item in expense_details)
-    profit = total_revenue - total_expenses
+    # 2. choose engine
+    if start_date <= CUTOFF:
+        revenue, expense = snapshot_details()
+    else:
+        revenue, expense = ledger_details(start_date, end_date)
 
-    for item in revenue_details:
-        item['relative_weight'] = (item['total_value'] / total_revenue) * 100 if total_revenue else 0
-    for item in expense_details:
-        item['relative_weight'] = (item['total_value'] / total_expenses) * 100 if total_expenses else 0
-    profit_weight = (profit / total_revenue) * 100 if total_revenue else 0
+    # 3. totals & weights
+    total_rev = sum(d["total_value"] for d in revenue)
+    total_exp = sum(d["total_value"] for d in expense)
+    profit    = total_rev - total_exp
 
-    # Prepare data for rendering
-    context = {
-        'total_revenue': total_revenue,
-        'total_expenses': total_expenses,
-        'profit': profit,
-        'revenue_details': revenue_details,
-        'profit_weight': profit_weight,
-        'expense_details': expense_details,
+    for d in revenue:
+        d["relative_weight"] = (d["total_value"] / total_rev * 100) if total_rev else 0
+    for d in expense:
+        d["relative_weight"] = (d["total_value"] / total_exp * 100) if total_exp else 0
+    profit_weight = (profit / total_rev * 100) if total_rev else 0
+
+    convenience = {
+        # rolling periods, all-inclusive of ‘today’
+        "Last&nbsp;week": (today - timedelta(days=7), today),
+        "Last&nbsp;two weeks": (today - timedelta(days=14), today),
+        "Last&nbsp;month": (today - timedelta(days=30), today),
+        "Last&nbsp;½&nbsp;year": (today - timedelta(days=182), today),
+        "Last&nbsp;year": (today - timedelta(days=365), today),
+        "YTD": (date(today.year, 1, 1), today),
     }
 
-    return render(request, 'income_statement.html', context)
+    # current-year quarters
+    for q in range(1, 5):
+        q_start = date(today.year, 3 * q - 2, 1)
+        q_end = date(today.year, 3 * q, calendar.monthrange(today.year, 3 * q)[1])
+        # avoid future dates for Q3/Q4 early in the year
+        convenience[f"Q{q}"] = (q_start, min(q_end, today))
+
+    # “since inception” flavours
+    inception_start = first_txn.transaction_date.date() if first_txn else today
+    convenience["Since&nbsp;inception&nbsp;OLD"] = (inception_start, today)
+    convenience["Since&nbsp;inception&nbsp;NEW"] = (CUTOFF + timedelta(days=1), today)
+
+    # build a list that is trivial to loop over in the template
+    ranges = [
+        {"label": label,
+         "start": s.isoformat(),
+         "end": e.isoformat()}
+        for label, (s, e) in convenience.items()
+    ]
+
+    return render(request, "income_statement.html", {
+        "start_date":      start_date,
+        "end_date":        end_date,
+        "total_revenue":   total_rev,
+        "total_expenses":  total_exp,
+        "profit":          profit,
+        "profit_weight":   profit_weight,
+        "revenue_details": revenue,
+        "expense_details": expense,
+        "quick_ranges": ranges,
+    })
 
 
 def get_graph_data(request):

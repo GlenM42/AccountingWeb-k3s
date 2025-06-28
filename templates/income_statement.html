@@ -25,6 +25,19 @@
         
 		<link rel="stylesheet" href="{% static 'html5up-stellar/assets/css/main.css' %}" />
 		<noscript><link rel="stylesheet" href="{% static 'html5up-stellar/assets/css/noscript.css' %}" /></noscript>
+
+        <style>
+            .range-heading{
+                text-align:center;
+                margin:0 0 1.5rem 0;
+            }
+            /* Make the borders of the quick-select pills fully visible */
+            .quick-range-bar .button {
+                box-shadow:none !important;        /* remove Stellar’s inset shadow       */
+                border:1px solid #b5b5b5 !important; /* draw a normal, uniform border     */
+            }
+
+        </style>
 	</head>
 	<body class="is-preload">
 
@@ -57,6 +70,46 @@
                                 <span class="image main"><img src="{% static 'html5up-stellar/images/pic00.jpg' %}" alt="" /></span>
 
                                 {% if user.is_authenticated %}
+                                <!-- ───────────────────────────────  DATE FILTER  ─────────────────────────────── -->
+                                <form method="get" style="display:flex; align-items:center; gap:1rem; flex-wrap:wrap; margin-bottom:2rem;">
+                                    <div style="display:flex; align-items:center; gap:1rem;">
+                                        <div style="display:flex; flex-direction: column; align-items:center; gap:1rem;">
+                                            <div style="display:flex;align-items:center;gap:1rem;">
+                                                <label>
+                                                    Start&nbsp;
+                                                    <input type="date" name="start_date"
+                                                           value="{{ start_date|date:'Y-m-d' }}">
+                                                </label>
+                                                <label>
+                                                    End&nbsp;
+                                                    <input type="date" name="end_date"
+                                                           value="{{ end_date|date:'Y-m-d' }}">
+                                                </label>
+                                            </div>
+
+                                            <!-- row with the apply button -->
+                                            <div style="display:flex; align-items:center; gap:1rem;">
+                                                <button type="submit" class="button primary small" style="align-self:flex-start;">
+                                                    Apply
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                        <!-- quick-range pills -->
+                                        <div class="quick-range-bar" style="display:flex; gap:.35rem; flex-wrap:wrap;padding:.25rem;">
+                                            {% for r in quick_ranges %}
+                                                <a class="button small" href="?start_date={{ r.start }}&amp;end_date={{ r.end }}">
+                                                    {{ r.label|safe }}
+                                                </a>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                </form>
+
+                                <h2 class="range-heading">
+                                    <small>{{ start_date|date:"F j, Y" }} &ndash; {{ end_date|date:"F j, Y" }}</small>
+                                </h2>
+
                                 <!-- Financial Data Table -->
                                 <div class="table-wrapper">
                                     <table>
@@ -74,7 +127,7 @@
                                                 <td>100%</td>
                                             </tr>
                                             {% for revenue in revenue_details %}
-                                            <tr>
+                                            <tr {% if revenue.is_deleted %}style="color:#d62323;"{% endif %}>
                                                 <td style="font-style: italic; padding-left: 50px;">{{ revenue.account_name }}</td>
                                                 <td>${{ revenue.total_value|floatformat:2 }}</td>
                                                 <td>{{ revenue.relative_weight|floatformat:2 }}%</td>
@@ -86,7 +139,7 @@
                                                 <td>100%</td>
                                             </tr>
                                             {% for expense in expense_details %}
-                                            <tr>
+                                            <tr {% if expense.is_deleted %}style="color:#d62323;"{% endif %}>
                                                 <td style="font-style: italic; padding-left: 50px;">{{ expense.account_name }}</td>
                                                 <td>${{ expense.total_value|floatformat:2 }}</td>
                                                 <td>{{ expense.relative_weight|floatformat:2 }}%</td>
@@ -100,7 +153,15 @@
                                         </tbody>
                                     </table>
                                 </div>
-                            {% else %}
+                                    <p>*Please note that throughout the life of the project, we have added and deleted accounts.
+                                    The current ones are displayed in gray, while the deleted ones are shown in red.</p>
+                                    <p>**The difference between the 'old' and 'new' views comes from the difference in calculation strategies:</p>
+                                    <ul>
+                                        <li>For the old view, we have used the current account values, and then went back by reverting the transactions.
+                                        That way, we would never see the deleted accounts.</li>
+                                        <li>For the new view, we are showing all the accounts involved in the transactions.</li>
+                                    </ul>
+                                {% else %}
                                 <p>You are not logged in! Please <a href="/login">log in</a> to view the summary dashboard.</p>
                             {% endif %}
                             </section>
