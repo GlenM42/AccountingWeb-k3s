@@ -161,6 +161,134 @@
                                         </table>
                                     </div>
                                 </div>
+
+                                <style>
+                                  .cash-calc { margin-top: 2rem; }
+                                  .cash-calc .table-wrapper { overflow-x:auto; }
+                                  .cash-calc table { width:100%; border-collapse:collapse; }
+                                  .cash-calc th, .cash-calc td { padding:.5rem .6rem; text-align:left; }
+                                  .cash-calc tfoot td { font-weight:700; }
+                                  .cash-calc input[type="number"] { width:7rem; }
+                                  .cash-calc .actions { display:flex; gap:.5rem; flex-wrap:wrap; }
+                                  .cash-calc .actions .button {
+                                        font-family: inherit;          /* use same font as theme buttons */
+                                        line-height: 1;                 /* consistent vertical centering */
+                                        font-size: 1.2rem;              /* larger text */
+                                        padding: 0.9rem 2rem;           /* equal top/bottom padding */
+                                        min-width: 150px;
+                                        display: inline-flex;           /* flex ensures perfect centering */
+                                        align-items: center;            /* vertical centering of text */
+                                        justify-content: center;        /* horizontal centering of text */
+                                    }
+
+                                </style>
+
+                                <section class="cash-calc">
+                                  <h2>Cash Calculator</h2>
+                                  <div class="table-wrapper">
+                                    <table aria-describedby="cash-calc-help">
+                                      <thead>
+                                        <tr>
+                                          <th>Denomination</th>
+                                          <th>Count</th>
+                                          <th>Subtotal</th>
+                                        </tr>
+                                      </thead>
+                                      <tbody id="cash-calc-rows">
+                                        <tr>
+                                          <td>$100</td>
+                                          <td><input id="b100" class="denom" data-value="100" type="number" min="0" step="1" value="0" inputmode="numeric"></td>
+                                          <td><span id="b100-subtotal">$0.00</span></td>
+                                        </tr>
+                                        <tr>
+                                          <td>$50</td>
+                                          <td><input id="b50" class="denom" data-value="50" type="number" min="0" step="1" value="0" inputmode="numeric"></td>
+                                          <td><span id="b50-subtotal">$0.00</span></td>
+                                        </tr>
+                                        <tr>
+                                          <td>$20</td>
+                                          <td><input id="b20" class="denom" data-value="20" type="number" min="0" step="1" value="0" inputmode="numeric"></td>
+                                          <td><span id="b20-subtotal">$0.00</span></td>
+                                        </tr>
+                                        <tr>
+                                          <td>$10</td>
+                                          <td><input id="b10" class="denom" data-value="10" type="number" min="0" step="1" value="0" inputmode="numeric"></td>
+                                          <td><span id="b10-subtotal">$0.00</span></td>
+                                        </tr>
+                                        <tr>
+                                          <td>$5</td>
+                                          <td><input id="b5" class="denom" data-value="5" type="number" min="0" step="1" value="0" inputmode="numeric"></td>
+                                          <td><span id="b5-subtotal">$0.00</span></td>
+                                        </tr>
+                                        <tr>
+                                          <td>$2</td>
+                                          <td><input id="b2" class="denom" data-value="2" type="number" min="0" step="1" value="0" inputmode="numeric"></td>
+                                          <td><span id="b2-subtotal">$0.00</span></td>
+                                        </tr>
+                                        <tr>
+                                          <td>$1</td>
+                                          <td><input id="b1" class="denom" data-value="1" type="number" min="0" step="1" value="0" inputmode="numeric"></td>
+                                          <td><span id="b1-subtotal">$0.00</span></td>
+                                        </tr>
+                                      </tbody>
+                                      <tfoot>
+                                        <tr>
+                                          <td colspan="2">Grand Total</td>
+                                          <td><strong id="grand-total">$0.00</strong></td>
+                                        </tr>
+                                      </tfoot>
+                                    </table>
+                                  </div>
+                                  <div class="actions">
+                                    <button type="button" class="button" id="clear-calc">Clear</button>
+                                  </div>
+                                </section>
+                                    <script>
+                                      (function () {
+                                        const $ = (sel) => document.querySelector(sel);
+                                        const $$ = (sel) => Array.from(document.querySelectorAll(sel));
+                                        const fmt = (n) => n.toLocaleString(undefined, { style: 'currency', currency: 'USD' });
+
+                                        function recalc() {
+                                          let total = 0;
+                                          $$('.denom').forEach(inp => {
+                                            const val = Number(inp.dataset.value);
+                                            const cnt = Number.parseInt(inp.value || '0', 10);
+                                            const sub = Math.max(0, cnt) * val;   // guard against negatives
+                                            total += sub;
+
+                                            const subCell = document.getElementById(`${inp.id}-subtotal`);
+                                            if (subCell) subCell.textContent = fmt(sub);
+                                          });
+                                          $('#grand-total').textContent = fmt(total);
+                                          return total;
+                                        }
+
+                                        // Live updates on any change/typing
+                                        document.getElementById('cash-calc-rows').addEventListener('input', (e) => {
+                                          if (e.target.classList.contains('denom')) recalc();
+                                        });
+
+                                        // Copy to the “Dollar Amount” field in your form
+                                        document.getElementById('send-to-amount').addEventListener('click', () => {
+                                          const total = recalc();
+                                          const amountField = document.querySelector('input[name="dollar_amount"]');
+                                          if (amountField) {
+                                            amountField.value = total.toFixed(2);
+                                            amountField.focus();
+                                          }
+                                        });
+
+                                        // Clear all counts
+                                        document.getElementById('clear-calc').addEventListener('click', () => {
+                                          $$('.denom').forEach(inp => inp.value = 0);
+                                          recalc();
+                                        });
+
+                                        // First paint
+                                        recalc();
+                                      })();
+                                    </script>
                                 {% else %}
                                     <p>You are not logged in! Please <a href="/login">log in</a> to view the summary dashboard.</p>
                                 {% endif %}
