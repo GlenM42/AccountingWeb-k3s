@@ -1,4 +1,5 @@
 {% load static %}
+{% load humanize %}
 <!DOCTYPE HTML>
 <html lang="en">
 	<head>
@@ -101,15 +102,14 @@
                                                 {% for asset in assets %}
                                                     <tr>
                                                         <td>{{ asset.account_name }}</td>
-                                                        <td>{{ asset.total_value }}</td>
+                                                        <td>${{ asset.total_value|floatformat:2|intcomma }}</td>
                                                     </tr>
                                                 {% endfor %}
-                                            </tbody>
-                                            <tfoot>
                                                 <tr>
-                                                    <td>Total: <strong>${{ total_assets }}</strong></td>
+                                                    <td><strong><b>Total:</b></strong></td>
+                                                    <td><strong>${{ total_assets|floatformat:2|intcomma }}</strong></td>
                                                 </tr>
-                                            </tfoot>
+                                            </tbody>
                                         </table>
                                     </div>
                                     <div class="table-wrapper">
@@ -125,15 +125,14 @@
                                                 {% for liability in liabilities %}
                                                     <tr>
                                                         <td>{{ liability.account_name }}</td>
-                                                        <td>{{ liability.total_value }}</td>
+                                                        <td>${{ liability.total_value|floatformat:2|intcomma }}</td>
                                                     </tr>
                                                 {% endfor %}
-                                            </tbody>
-                                            <tfoot>
                                                 <tr>
-                                                    <td>Total: <strong>${{ total_liabilities }}</strong></td>
+                                                    <td><strong><b>Total:</b></strong></td>
+                                                    <td><strong>${{ total_liabilities|floatformat:2|intcomma }}</strong></td>
                                                 </tr>
-                                            </tfoot>
+                                            </tbody>
                                         </table>
                                     </div>
                                     <div class="table-wrapper">
@@ -149,13 +148,13 @@
                                                 {% for equity_account in equity_accounts %}
                                                     <tr>
                                                         <td>{{ equity_account.account_name }}</td>
-                                                        <td>{{ equity_account.total_value }}</td>
+                                                        <td>${{ equity_account.total_value|floatformat:2|intcomma }}</td>
                                                     </tr>
                                                 {% endfor %}
                                             </tbody>
                                             <tfoot>
                                                 <tr>
-                                                    <td>Total: <strong>${{ total_equity }}</strong></td>
+                                                    <td colspan="3" style="text-align: center;"><strong>Total Equity: ${{ total_equity|floatformat:2|intcomma }}</strong></td>
                                                 </tr>
                                             </tfoot>
                                         </table>
@@ -243,52 +242,6 @@
                                     <button type="button" class="button" id="clear-calc">Clear</button>
                                   </div>
                                 </section>
-                                    <script>
-                                      (function () {
-                                        const $ = (sel) => document.querySelector(sel);
-                                        const $$ = (sel) => Array.from(document.querySelectorAll(sel));
-                                        const fmt = (n) => n.toLocaleString(undefined, { style: 'currency', currency: 'USD' });
-
-                                        function recalc() {
-                                          let total = 0;
-                                          $$('.denom').forEach(inp => {
-                                            const val = Number(inp.dataset.value);
-                                            const cnt = Number.parseInt(inp.value || '0', 10);
-                                            const sub = Math.max(0, cnt) * val;   // guard against negatives
-                                            total += sub;
-
-                                            const subCell = document.getElementById(`${inp.id}-subtotal`);
-                                            if (subCell) subCell.textContent = fmt(sub);
-                                          });
-                                          $('#grand-total').textContent = fmt(total);
-                                          return total;
-                                        }
-
-                                        // Live updates on any change/typing
-                                        document.getElementById('cash-calc-rows').addEventListener('input', (e) => {
-                                          if (e.target.classList.contains('denom')) recalc();
-                                        });
-
-                                        // Copy to the “Dollar Amount” field in your form
-                                        document.getElementById('send-to-amount').addEventListener('click', () => {
-                                          const total = recalc();
-                                          const amountField = document.querySelector('input[name="dollar_amount"]');
-                                          if (amountField) {
-                                            amountField.value = total.toFixed(2);
-                                            amountField.focus();
-                                          }
-                                        });
-
-                                        // Clear all counts
-                                        document.getElementById('clear-calc').addEventListener('click', () => {
-                                          $$('.denom').forEach(inp => inp.value = 0);
-                                          recalc();
-                                        });
-
-                                        // First paint
-                                        recalc();
-                                      })();
-                                    </script>
                                 {% else %}
                                     <p>You are not logged in! Please <a href="/login">log in</a> to view the summary dashboard.</p>
                                 {% endif %}
@@ -350,5 +303,41 @@
             </div>
         </nav>
 
+    <script>
+      (function () {
+        const $ = (sel) => document.querySelector(sel);
+        const $$ = (sel) => Array.from(document.querySelectorAll(sel));
+        const fmt = (n) => n.toLocaleString(undefined, { style: 'currency', currency: 'USD' });
+
+        function recalc() {
+          let total = 0;
+          $$('.denom').forEach(inp => {
+            const val = Number(inp.dataset.value);
+            const cnt = Number.parseInt(inp.value || '0', 10);
+            const sub = Math.max(0, cnt) * val;   // guard against negatives
+            total += sub;
+
+            const subCell = document.getElementById(`${inp.id}-subtotal`);
+            if (subCell) subCell.textContent = fmt(sub);
+          });
+          $('#grand-total').textContent = fmt(total);
+          return total;
+        }
+
+        // Live updates on any change/typing
+        document.getElementById('cash-calc-rows').addEventListener('input', (e) => {
+          if (e.target.classList.contains('denom')) recalc();
+        });
+
+        // Clear all counts
+        document.getElementById('clear-calc').addEventListener('click', () => {
+          $$('.denom').forEach(inp => inp.value = 0);
+          recalc();
+        });
+
+        // First paint
+        recalc();
+      })();
+    </script>
     </body>
 </html>
