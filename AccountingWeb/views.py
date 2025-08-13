@@ -29,13 +29,8 @@ def balance_sheet_view(request):
     liabilities = Account.objects.filter(account_type='liability').order_by('account_name')
     equity_accounts = Account.objects.filter(account_type='equity')
 
-    # Include revenue and expenses accounts in the equity column
-    revenue_expenses = Account.objects.filter(account_type__in=['revenue', 'expense'])
-    equity_accounts = equity_accounts.union(revenue_expenses).order_by('account_name')
-
     total_assets = sum(asset.total_value for asset in assets)
     total_liabilities = sum(liability.total_value for liability in liabilities)
-    total_equity = sum(equity_account.total_value for equity_account in equity_accounts)
 
     return render(request, 'balance_sheet.html', {
         'assets': assets,
@@ -43,7 +38,7 @@ def balance_sheet_view(request):
         'equity_accounts': equity_accounts,
         'total_assets': total_assets,
         'total_liabilities': total_liabilities,
-        'total_equity': total_equity,
+        'total_equity': total_assets - total_liabilities,
     })
 
 def transaction_history_view(request):

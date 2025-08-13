@@ -1,4 +1,5 @@
 {% load static %}
+{% load humanize %}
 <!DOCTYPE HTML>
 <!--
 	Stellar by HTML5 UP
@@ -85,7 +86,7 @@
                                             <tr>
                                                 <td>{{ tx.debit }} / {{ tx.credit }}</td>
                                                 <td>{{ tx.description }}</td>
-                                                <td>{{ tx.dollar_amount }}</td>
+                                                <td>${{ tx.dollar_amount|floatformat:2|intcomma }}</td>
                                                 <td>{{ tx.transaction_date }}</td>
                                             </tr>
                                             {% empty %}
