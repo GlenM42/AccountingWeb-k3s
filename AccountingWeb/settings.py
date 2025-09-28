@@ -33,6 +33,21 @@ ALLOWED_HOSTS = ['*']
 
 LOGIN_REDIRECT_URL = '/'
 
+# Trust your Tailscale hostname(s) for CSRF
+CSRF_TRUSTED_ORIGINS = [
+    'https://*.panga-ghost.ts.net',
+]
+
+# tell Django to respect X-Forwarded-Proto so it knows the original request was HTTPS:
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
+# If you’re always behind that proxy, this can help with host headers:
+USE_X_FORWARDED_HOST = True
+
+# Cookies should be secure when you’re serving over HTTPS:
+CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = True
+
 # Application definition
 
 INSTALLED_APPS = [
