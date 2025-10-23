@@ -1,76 +1,107 @@
 from datetime import timedelta
+from decimal import Decimal
+
 import pandas as pd
 from django.db.models import Q, Sum
 from django.utils import timezone
+
+from .crypto import dec_decimal
 from .models import Account, Transaction
 
 
-def calculate_account_balance_over_time(account_name, days=7):
+def _decrypt_account_total(account, dek: bytes) -> Decimal:
+    """
+    Return Decimal current balance for an Account from encrypted fields.
+    """
+    total = dec_decimal(dek, getattr(account, "total_value_ct", None),
+                             getattr(account, "total_value_iv", None))
+    return total if total is not None else Decimal("0")
+
+
+def _decrypt_txn_amount(txn, dek: bytes) -> Decimal:
+    """
+    Return Decimal amount for a Transaction.
+    Works whether the project still has plaintext dollar_amount
+    or has migrated to dollar_amount_ct/iv.
+    """
+    # Encrypted path
+    if hasattr(txn, "dollar_amount_ct"):
+        amt = dec_decimal(dek, getattr(txn, "dollar_amount_ct", None),
+                               getattr(txn, "dollar_amount_iv", None))
+        if amt is not None:
+            return amt
+    # Fallback to plaintext if present
+    if hasattr(txn, "dollar_amount") and txn.dollar_amount is not None:
+        return Decimal(txn.dollar_amount)
+    return Decimal("0")
+
+
+def calculate_account_balance_over_time(user, account_name, days=7, dek: bytes | None = None):
     """
     Calculate the balance of the given account over the past 'days' number of days.
-    Args:
-        account_name (str): The name of the account.
-        days (int): Number of days to look back for transactions. Default is 7.
-    Returns:
-        list: Dates (as strings) over the given period.
-        list: Corresponding balance values for each date.
+    Returns (dates: [str], values: [float]).
     """
-    # Get the account and its current balance
-    account = Account.objects.filter(account_name=account_name).first()
+    if not dek:
+        raise ValueError("Data encryption key (dek) is required for graph calculations.")
+
+    # Get the account and its current (decrypted) balance
+    account = Account.objects.filter(owner=user, account_name=account_name).first()
     if not account:
         raise ValueError(f"Account '{account_name}' not found.")
 
-    current_balance = account.total_value
+    current_balance = _decrypt_account_total(account, dek)
+
     today = timezone.now()
     start_date = today - timedelta(days=days)
 
-    # Determine if the account is a 'debit' or 'credit' type
+    # debit-or-credit nature of the account
     is_debit_account = account.debit_or_credit == 'debit'
 
-    # Get all transactions involving the account within the date range
-    transactions = (
-        Transaction.objects.filter(
-            Q(debit=account_name) | Q(credit=account_name),
-            transaction_date__gte=start_date
-        )
-        .values('transaction_date__date')  # Group by date
-        .annotate(
-            debit_sum=Sum('dollar_amount', filter=Q(debit=account_name)),
-            credit_sum=Sum('dollar_amount', filter=Q(credit=account_name))
-        )
-        .order_by('-transaction_date__date')
+    # Pull raw transactions (no DB-side sums on encrypted data)
+    txns = (
+        Transaction.objects
+        .filter(owner=user)
+        .filter(Q(debit=account_name) | Q(credit=account_name),
+                transaction_date__gte=start_date)
+        .order_by('-transaction_date')  # newest → oldest
+        .only('debit', 'credit', 'transaction_date',
+            'dollar_amount_ct', 'dollar_amount_iv')  # fields may vary; safe to include
     )
-    # Initialize rolling balance and snapshots
+
+    # Aggregate per calendar date in Python
+    # structure: {date: {"debit_sum": Decimal, "credit_sum": Decimal}}
+    per_day = {}
+
+    for t in txns:
+        d = t.transaction_date.date()
+        per_day.setdefault(d, {"debit_sum": Decimal("0"), "credit_sum": Decimal("0")})
+        amt = _decrypt_txn_amount(t, dek)
+
+        if t.debit == account_name:
+            per_day[d]["debit_sum"] += amt
+        if t.credit == account_name:
+            per_day[d]["credit_sum"] += amt
+
+    # Build rolling snapshots by "undoing" newer days first
     rolling_balance = current_balance
-    balance_snapshots = []
+    snapshots = []
 
-    # "Undo" transactions in reverse order to calculate past balances
-    for txn in transactions:
-        date = txn['transaction_date__date']
-        debit_sum = txn['debit_sum'] or 0  # Handle None values
-        credit_sum = txn['credit_sum'] or 0  # Handle None values
+    # Iterate newest → oldest (to undo correctly)
+    for d in sorted(per_day.keys(), reverse=True):
+        debit_sum = per_day[d]["debit_sum"]
+        credit_sum = per_day[d]["credit_sum"]
 
-        # Calculate the net effect of the day's transactions on the balance
         if is_debit_account:
-            # For debit accounts: Subtract outflows and add inflows
+            # For debit accounts: Subtract outflows (debits) and add inflows (credits)
             rolling_balance += credit_sum - debit_sum
         else:
-            # For credit accounts: Add outflows and subtract inflows
+            # For credit accounts: Add outflows (credits) and subtract inflows (debits)
             rolling_balance += debit_sum - credit_sum
 
-        # Add a snapshot for this date
-        balance_snapshots.append({
-            'date': date,
-            'balance': float(rolling_balance)
-        })
+        snapshots.append({"date": d, "balance": float(rolling_balance)})
 
-    # Add a snapshot for the current balance at today's date
-    balance_snapshots.append({
-        'date': today.date(),
-        'balance': float(current_balance)
-    })
+    # Include today's current balance snapshot (after undoing history)
+    snapshots.append({"date": today.date(), "balance": float(current_balance)})
 
-    # Convert the snapshots to a DataFrame and sort by date for plotting
-    df = pd.DataFrame(balance_snapshots).sort_values(by='date')
-
+    df = pd.DataFrame(snapshots).sort_values(by='date')
     return df['date'].astype(str).tolist(), df['balance'].tolist()

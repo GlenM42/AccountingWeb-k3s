@@ -20,12 +20,12 @@ from django.contrib import admin
 from django.urls import path
 from .views import (home_view, balance_sheet_view, transaction_history_view, new_transaction_view,
                     income_statement_view, summary_view, get_graph_data, favicon_redirect, apple_icon_redirect,
-                    apple_icon_precomposed_redirect)
-from django.contrib.auth.views import LoginView, LogoutView
+                    apple_icon_precomposed_redirect, unlock_data, UnlockingLoginView)
+from django.contrib.auth.views import LogoutView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('login/', LoginView.as_view(), name='login'),
+    path('login/', UnlockingLoginView.as_view(), name='login'),
     path('logout/', LogoutView.as_view(), name='logout'),
 
     path('', home_view, name='home'),
@@ -39,4 +39,6 @@ urlpatterns = [
     path('favicon.ico', favicon_redirect),
     path('apple-touch-icon.png', apple_icon_redirect),
     path('apple-touch-icon-precomposed.png', apple_icon_precomposed_redirect),
+
+    path('me/unlock/', unlock_data, name='unlock_data'),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

@@ -31,7 +31,9 @@ DEBUG = (os.getenv('DEBUG') == 'True')
 
 ALLOWED_HOSTS = ['*']
 
+LOGIN_URL = '/login/'           # where your login view actually lives
 LOGIN_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = '/'       # after logout (optional)
 
 # Trust your Tailscale hostname(s) for CSRF
 CSRF_TRUSTED_ORIGINS = [
@@ -47,6 +49,11 @@ USE_X_FORWARDED_HOST = True
 # Cookies should be secure when you’re serving over HTTPS:
 CSRF_COOKIE_SECURE = True
 SESSION_COOKIE_SECURE = True
+
+if DEBUG:
+    SESSION_COOKIE_SECURE = False
+    CSRF_COOKIE_SECURE = False
+    SECURE_SSL_REDIRECT = False
 
 # Application definition
 
