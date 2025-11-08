@@ -14,3 +14,5 @@ db.sqlite3
 docker-compose.yml
 console.sql
 /k8s/03-secret.yml
+staticfiles/
+.DS_Store
