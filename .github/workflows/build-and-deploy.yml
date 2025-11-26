@@ -81,5 +81,5 @@ jobs:
           fi
   
       - name: Cleanup unused images
-        run: docker image prune -f
+        run: docker system prune -a -f
 
