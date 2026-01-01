@@ -4,9 +4,7 @@ FROM python:3.12-slim
 # PYTHONDONTWRITEBYTECODE=1 : prevents Python from creating .pyc files in __pycache__/
 # PYTHONUNBUFFERED=1        : forces Python to flush stdout/stderr immediately
 ENV PYTHONDONTWRITEBYTECODE=1 \
-    PYTHONUNBUFFERED=1 \
-    VIRTUAL_ENV=/opt/venv \
-    PATH="/opt/venv/bin:$PATH"
+    PYTHONUNBUFFERED=1
 
 WORKDIR /app
 
@@ -23,9 +21,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 # Install uv
 RUN curl -LsSf https://astral.sh/uv/install.sh | env UV_INSTALL_DIR=/usr/local/bin sh
-
-# Create venv (kept in a fixed path)
-RUN python -m venv /opt/venv
 
 # Copy dependency files first (better caching)
 COPY pyproject.toml uv.lock ./
