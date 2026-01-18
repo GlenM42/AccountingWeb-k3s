@@ -1,7 +1,49 @@
+# Python bytecode and cache
 __pycache__
 *.pyc
 *.pyo
 *.pyd
 .Python
+
+# Virtual environments
 .env
 .venv
+env/
+venv/
+
+# Python package metadata
+*.egg-info/
+
+# Git
+.git/
+.gitignore
+
+# Documentation (except README)
+*.md
+!README.md
+CLAUDE.md
+
+# Testing and coverage
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+
+# Kubernetes manifests
+k8s/
+
+# Build artifacts that shouldn't be in image
+staticfiles/
+
+# CI/CD
+.github/
