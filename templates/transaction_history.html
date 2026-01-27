@@ -71,6 +71,60 @@
 							<section id="content" class="main">
                                 <span class="image main"><img src="{% static 'html5up-stellar/images/pic09.jpeg' %}" alt="" /></span>
                                 {% if user.is_authenticated %}
+
+                                {# -------- Account Filters -------- #}
+                                <form method="get" style="display:flex; align-items:flex-end; gap:1rem; flex-wrap:wrap; margin-bottom:2rem; justify-content:center;">
+                                    <div style="display:flex; gap:1rem; align-items:flex-end;">
+                                        {# Debit Account Filter #}
+                                        <div style="display:flex; flex-direction:column; gap:0.5rem;">
+                                            <label for="debit_filter" style="margin:0; font-weight:bold;">Debit Account:</label>
+                                            <select name="debit_filter" id="debit_filter" style="min-width:200px;">
+                                                <option value="">-- All Accounts --</option>
+                                                {% for account_name in account_names %}
+                                                    <option value="{{ account_name }}" {% if debit_filter == account_name %}selected{% endif %}>
+                                                        {{ account_name }}
+                                                    </option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+
+                                        {# Credit Account Filter #}
+                                        <div style="display:flex; flex-direction:column; gap:0.5rem;">
+                                            <label for="credit_filter" style="margin:0; font-weight:bold;">Credit Account:</label>
+                                            <select name="credit_filter" id="credit_filter" style="min-width:200px;">
+                                                <option value="">-- All Accounts --</option>
+                                                {% for account_name in account_names %}
+                                                    <option value="{{ account_name }}" {% if credit_filter == account_name %}selected{% endif %}>
+                                                        {{ account_name }}
+                                                    </option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+
+                                        {# Apply Button #}
+                                        <button type="submit" class="button primary small">
+                                            Apply Filters
+                                        </button>
+
+                                        {# Clear Filters Link #}
+                                        {% if debit_filter or credit_filter %}
+                                            <a href="{% url 'transaction_history' %}" class="button small">
+                                                Clear Filters
+                                            </a>
+                                        {% endif %}
+                                    </div>
+                                </form>
+
+                                {# Show active filters #}
+                                {% if debit_filter or credit_filter %}
+                                <p style="margin-bottom:1.5rem; font-style:italic; color:#666; text-align:center;">
+                                    Showing transactions
+                                    {% if debit_filter %}with debit account: <strong>{{ debit_filter }}</strong>{% endif %}
+                                    {% if debit_filter and credit_filter %} and {% endif %}
+                                    {% if credit_filter %}with credit account: <strong>{{ credit_filter }}</strong>{% endif %}
+                                </p>
+                                {% endif %}
+
                                 <div class="table-wrapper">
                                     <table>
                                         <thead>
@@ -90,7 +144,13 @@
                                                 <td>{{ tx.transaction_date }}</td>
                                             </tr>
                                             {% empty %}
-                                            <tr><td colspan="4">No transactions yet.</td></tr>
+                                            <tr><td colspan="4">
+                                                {% if debit_filter or credit_filter %}
+                                                    No transactions match the selected filters.
+                                                {% else %}
+                                                    No transactions yet.
+                                                {% endif %}
+                                            </td></tr>
                                             {% endfor %}
                                         </tbody>
                                     </table>
@@ -101,7 +161,7 @@
 
                                     {# Previous link #}
                                     {% if transactions.has_previous %}
-                                        <li><a href="?page={{ transactions.previous_page_number }}" class="button page-btn">&laquo;&nbsp;Prev</a></li>
+                                        <li><a href="?page={{ transactions.previous_page_number }}&debit_filter={{ debit_filter }}&credit_filter={{ credit_filter }}" class="button page-btn">&laquo;&nbsp;Prev</a></li>
                                     {% else %}
                                         <li><span class="button page-btn-disabled">&laquo;&nbsp;Prev</span></li>
                                     {% endif %}
@@ -111,13 +171,13 @@
                                         {% if num == transactions.number %}
                                             <li><span class="button page-btn">{{ num }}</span></li>
                                         {% elif num >= transactions.number|add:"-2" and num <= transactions.number|add:"2" %}
-                                            <li><a href="?page={{ num }}" class="button page-btn">{{ num }}</a></li>
+                                            <li><a href="?page={{ num }}&debit_filter={{ debit_filter }}&credit_filter={{ credit_filter }}" class="button page-btn">{{ num }}</a></li>
                                         {% endif %}
                                     {% endfor %}
 
                                     {# Next link #}
                                     {% if transactions.has_next %}
-                                        <li><a href="?page={{ transactions.next_page_number }}" class="button page-btn">Next&nbsp;&raquo;</a></li>
+                                        <li><a href="?page={{ transactions.next_page_number }}&debit_filter={{ debit_filter }}&credit_filter={{ credit_filter }}" class="button page-btn">Next&nbsp;&raquo;</a></li>
                                     {% else %}
                                         <li><span class="button page-btn-disabled">Next&nbsp;&raquo;</span></li>
                                     {% endif %}

@@ -110,8 +110,30 @@ def balance_sheet_view(request):
 
 @login_required
 def transaction_history_view(request):
-    # Filter by user
-    transaction_qs = Transaction.objects.all().filter(owner=request.user).order_by("-transaction_date")
+    # Get filter parameters from GET request
+    debit_filter = request.GET.get("debit_filter", "")
+    credit_filter = request.GET.get("credit_filter", "")
+
+    # Retrieve account names for dropdown population
+    account_names = list(
+        Account.objects.filter(owner=request.user)
+        .order_by('account_name')
+        .values_list('account_name', flat=True)
+    )
+
+    # Build queryset with filters (before decryption for efficiency)
+    transaction_qs = Transaction.objects.filter(owner=request.user)
+
+    # Apply debit filter if specified
+    if debit_filter:
+        transaction_qs = transaction_qs.filter(debit=debit_filter)
+
+    # Apply credit filter if specified
+    if credit_filter:
+        transaction_qs = transaction_qs.filter(credit=credit_filter)
+
+    # Order by date descending
+    transaction_qs = transaction_qs.order_by("-transaction_date")
 
     dek = get_dek_from_session(request)
 
@@ -132,7 +154,12 @@ def transaction_history_view(request):
     return render(
         request,
         "transaction_history.html",
-        {"transactions": transactions}              # this is now a *Page* object
+        {
+            "transactions": transactions,
+            "account_names": account_names,
+            "debit_filter": debit_filter,
+            "credit_filter": credit_filter,
+        }
     )
 
 
