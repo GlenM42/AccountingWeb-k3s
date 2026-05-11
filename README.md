@@ -1,5 +1,9 @@
 # AccountingWeb
 
+---
+The project is archived.
+---
+
 The project has been in development since late 2023. The purpose of it was to create a bookkeeping system that would impose all the required checks to prevent any
 mistakes that might happen during the paper bookkeeping (yes, some people do that!). It was chosen to make the system as a website build on Django in a connection
 with the SQLite database to record transactions. 
